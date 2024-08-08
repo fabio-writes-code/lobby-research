@@ -3,7 +3,6 @@ import { SyntheticEvent } from "react";
 import { db } from "~/server/db";
 import { hansardDocument } from "~/server/db/schema";
 import { Dashboard } from "~/components/component/dashboard";
-import ContentArea from "./ContentArea";
 
 export default async function HomePage() {
   // const document = await db.select().from(hansardDocument);
@@ -13,7 +12,7 @@ export default async function HomePage() {
 
   return (
     <main className="flex min-h-screen">
-      <ContentArea />
+      <Link href="/document-list/1">Document List</Link>
     </main>
   );
 }
