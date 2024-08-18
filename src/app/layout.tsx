@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn("antialiased", fontHeading.variable, fontBody.variable)}
+        className={`${cn("antialiased", fontHeading.variable, fontBody.variable)} h-screen`}
       >
         <Navbar />
         {children}
