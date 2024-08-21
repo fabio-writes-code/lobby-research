@@ -31,6 +31,10 @@ import {
 } from "~/components/ui/form";
 import { cn } from "~/lib/utils";
 
+interface DateFormProps {
+  setContent: (content: string[]) => void;
+}
+
 const FormSchema = z
   .object({
     startDate: z.date({
@@ -48,11 +52,7 @@ const FormSchema = z
     path: ["endDate"],
   });
 
-export default function DateForm({
-  setContent,
-}: {
-  setContent: (content: string[]) => void;
-}) {
+export default function DateForm({ setContent }: DateFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -66,17 +66,17 @@ export default function DateForm({
   });
 
   return (
-    <div className="container w-full">
+    <div className="my-auto ms-0">
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="flex items-center">
-            <div className="flex-1 gap-4 space-y-2">
+        <form onSubmit={handleSubmit} className="pt-4">
+          <div className="flex flex-wrap items-end justify-start gap-2 sm:gap-6">
+            <div className="gap-4 space-y-2">
               <FormField
                 control={form.control}
                 name="startDate"
                 render={({ field }) => (
                   <FormItem className="flex items-center gap-4">
-                    <FormLabel className="py-2">Start Date</FormLabel>
+                    <FormLabel>Start Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -113,13 +113,13 @@ export default function DateForm({
                 )}
               />
             </div>
-            <div className="flex-1 space-y-2">
+            <div className="gap-4 space-y-2">
               <FormField
                 control={form.control}
                 name="endDate"
                 render={({ field }) => (
                   <FormItem className="flex items-center gap-4">
-                    <FormLabel className="py-2">End Date</FormLabel>
+                    <FormLabel>End Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -156,26 +156,10 @@ export default function DateForm({
                 )}
               />
             </div>
-            <div className="flex-auto space-y-2">
-              <FormField
-                control={form.control}
-                name="keywords"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-4">
-                    <FormLabel className="py-2">Keywords</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter keywords separated by commas"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <Button className="w-full sm:w-fit" type="submit">
+              Retrieve Documents
+            </Button>
           </div>
-          <Button type="submit">Search</Button>
         </form>
       </Form>
     </div>
