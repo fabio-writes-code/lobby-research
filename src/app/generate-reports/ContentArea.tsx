@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-import ReactMarkdown from "react-markdown";
 import SearchForm from "./SearchForm";
 import SidePanel from "./SidePanel";
 import TextArea from "./TextArea";
@@ -38,6 +36,7 @@ const ContentArea = ({ content }: Props) => {
           {!!content.length &&
             content.map((content) => (
               <TextArea
+                id={content.date.toDateString()}
                 key={content.date.toDateString()}
                 content={content.content!.split("\n")}
               />
