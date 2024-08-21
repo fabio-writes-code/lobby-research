@@ -3,10 +3,11 @@
 import React from "react";
 import ContentArea from "./ContentArea";
 import DateForm from "./DateForm";
-import SearchForm from "./SearchForm";
 
 export default function GenerateReportsPage() {
-  const [content, setContent] = React.useState<string[]>([]);
+  const [content, setContent] = React.useState<
+    { date: Date; content: string | null }[]
+  >([]);
 
   return (
     <div className="container grid grid-cols-1">

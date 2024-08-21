@@ -3,12 +3,11 @@
 
 import { sql } from "drizzle-orm";
 import {
-  index,
+  date,
   pgTableCreator,
   serial,
   text,
   timestamp,
-  varchar,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -42,4 +41,5 @@ export const hansardDocument = createTable("hansard_document", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   content: text("content"),
+  hansard_date: date("hansard_date", { mode: "date" }).notNull(),
 });

@@ -3,15 +3,6 @@
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -30,9 +21,11 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { cn } from "~/lib/utils";
+import { useTransition } from "react";
+import { getDocuments } from "~/actions/getDocuments";
 
 interface DateFormProps {
-  setContent: (content: string[]) => void;
+  setContent: (content: { date: Date; content: string | null }[]) => void;
 }
 
 const FormSchema = z
@@ -53,6 +46,8 @@ const FormSchema = z
   });
 
 export default function DateForm({ setContent }: DateFormProps) {
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -60,9 +55,19 @@ export default function DateForm({ setContent }: DateFormProps) {
     },
   });
 
-  const handleSubmit = form.handleSubmit((data) => {
-    if (form.formState.errors) console.log(form.formState.errors);
+  const handleSubmit = form.handleSubmit(async (data) => {
     console.log(data);
+    startTransition(() => {
+      getDocuments({
+        startDate: data.startDate,
+        endDate: data.endDate,
+      })
+        .then((content) => {
+          if (!content) console.log("No new content");
+          else setContent(content);
+        })
+        .catch((e) => console.log(e));
+    });
   });
 
   return (

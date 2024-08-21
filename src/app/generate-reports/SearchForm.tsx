@@ -40,7 +40,7 @@ const SearchForm = ({ isContent }: SearchFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit} className="mt-4">
+      <form onSubmit={handleSubmit}>
         <div className="flex w-full flex-wrap items-end justify-between gap-2 sm:gap-6">
           <FormField
             control={form.control}
@@ -62,7 +62,7 @@ const SearchForm = ({ isContent }: SearchFormProps) => {
           <Button
             className="w-full sm:w-fit"
             type="submit"
-            disabled={isContent}
+            disabled={!isContent}
           >
             Search
           </Button>
