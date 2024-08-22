@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import SearchForm from "./SearchForm";
 import SidePanel from "./SidePanel";
 import TextArea from "./TextArea";
@@ -9,19 +10,22 @@ interface Props {
 }
 
 const ContentArea = ({ content }: Props) => {
-  console.log(content);
-  // const [searchTerm, setSearchTerm] = React.useState<string>("");
-  // const [filteredContent, setFilteredContent] =
-  //   React.useState<string[]>(content);
+  const [filteredContent, setFilteredContent] = useState<string[]>(
+    content.map((content) => content.content!),
+  );
 
-  // const handleInputBoxChange = (e: HTMLInputElement) => {
-  //   setFilteredContent(() => {
-  //     return content.filter((line) =>
-  //       line.toLowerCase().includes(e.value.toLowerCase()),
-  //     );
-  //   });
-  //   setSearchTerm(e.value);
-  // };
+  const handleSearchArrayChange = (pills: string[]) => {
+    console.log(pills);
+
+    for (const document of content) {
+      const lines = document.content?.split("\n");
+    }
+
+    const filteredContent = content.filter((content) =>
+      pills.every((pill) => content.content!.includes(pill)),
+    );
+    setFilteredContent(filteredContent.map((content) => content.content!));
+  };
 
   return (
     <div className="relative mt-4">
@@ -32,7 +36,10 @@ const ContentArea = ({ content }: Props) => {
           </div>
         )}
         <div className="col-span-6">
-          <SearchForm isContent={!!content.length} />
+          <SearchForm
+            isContent={!!content.length}
+            setSearchArray={handleSearchArrayChange}
+          />
           {!!content.length &&
             content.map((content) => (
               <TextArea

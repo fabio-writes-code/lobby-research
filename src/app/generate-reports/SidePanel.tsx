@@ -9,7 +9,7 @@ export default function SidePanel({ contentArray }: SidePanelProps) {
         <a
           key={content.toDateString()}
           href={`#${content.toDateString()}`}
-          className="w-full justify-start gap-2 rounded-md py-2 text-left text-sm font-medium text-primary shadow-md hover:bg-muted dark:hover:bg-[#334155]"
+          className="w-full justify-start gap-2 rounded-md px-2 py-2 text-left text-sm font-medium text-primary shadow-md hover:bg-muted dark:hover:bg-[#334155]"
         >
           {/* <CalendarIcon className="h-5 w-5 grid-cols-1" /> */}
           <span>{content.toDateString()}</span>
