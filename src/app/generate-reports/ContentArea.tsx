@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchForm from "./SearchForm";
 import SidePanel from "./SidePanel";
 import TextArea from "./TextArea";
@@ -10,21 +10,39 @@ interface Props {
 }
 
 const ContentArea = ({ content }: Props) => {
-  const [filteredContent, setFilteredContent] = useState<string[]>(
-    content.map((content) => content.content!),
-  );
+  const [filteredContent, setFilteredContent] =
+    useState<{ date: Date; content: string | null }[]>(content);
+
+  useEffect(() => {
+    setFilteredContent(content);
+  }, [content]);
 
   const handleSearchArrayChange = (pills: string[]) => {
-    console.log(pills);
+    function filterContent(text: string, pills: string[]) {
+      if (pills.length === 0) return text;
 
-    for (const document of content) {
-      const lines = document.content?.split("\n");
+      const regex = new RegExp(`(${pills.join("|")})`, "gi");
+
+      const paragraphs = text.split("\n");
+
+      const filtered = paragraphs
+        .filter((paragraph) =>
+          pills.some((pill) =>
+            paragraph.toLowerCase().includes(pill.toLowerCase()),
+          ),
+        )
+        .map((paragraph) =>
+          paragraph.replace(regex, (match) => `\`${match}\``),
+        );
+      return filtered.join("\n");
     }
 
-    const filteredContent = content.filter((content) =>
-      pills.every((pill) => content.content!.includes(pill)),
-    );
-    setFilteredContent(filteredContent.map((content) => content.content!));
+    const filteredContent = content.map((content) => ({
+      date: content.date,
+      content: filterContent(content.content!, pills),
+    }));
+
+    setFilteredContent(filteredContent);
   };
 
   return (
@@ -40,10 +58,10 @@ const ContentArea = ({ content }: Props) => {
             isContent={!!content.length}
             setSearchArray={handleSearchArrayChange}
           />
-          {!!content.length &&
-            content.map((content) => (
+          {!!filteredContent.length &&
+            filteredContent.map((content) => (
               <TextArea
-                id={content.date.toDateString()}
+                id={content.date.toDateString().replaceAll(/\s/g, "")}
                 key={content.date.toDateString()}
                 content={content.content!.split("\n")}
               />

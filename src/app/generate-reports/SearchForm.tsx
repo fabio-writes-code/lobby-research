@@ -1,9 +1,14 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
+import {
+  type ChangeEvent,
+  type KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 
 interface SearchFormProps {
   isContent: boolean;
@@ -21,6 +26,10 @@ const SearchForm = ({ isContent, setSearchArray }: SearchFormProps) => {
       containerRef.current.scrollLeft = containerRef.current.scrollWidth;
     }
   }, [pills]);
+
+  useEffect(() => {
+    setPills([]);
+  }, [isContent]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -95,10 +104,10 @@ const SearchForm = ({ isContent, setSearchArray }: SearchFormProps) => {
       <Button
         className="w-full sm:w-fit"
         type="submit"
-        disabled={!isContent || !pills.length}
+        disabled={!isContent}
         onClick={handleClick}
       >
-        Retrieve Documents
+        Search Keywords
       </Button>
     </div>
   );

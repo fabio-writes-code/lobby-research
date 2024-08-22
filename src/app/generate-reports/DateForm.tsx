@@ -56,7 +56,6 @@ export default function DateForm({ setContent }: DateFormProps) {
   });
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    console.log(data);
     startTransition(() => {
       getDocuments({
         startDate: data.startDate,
