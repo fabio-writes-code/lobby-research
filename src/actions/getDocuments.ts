@@ -22,7 +22,6 @@ export const getDocuments = async ({
       .from(hansardDocument)
       .where(between(hansardDocument.hansard_date, startDate, endDate));
     const contentArray = document;
-    console.log(contentArray);
     return contentArray;
   } catch (e) {
     console.log(e);

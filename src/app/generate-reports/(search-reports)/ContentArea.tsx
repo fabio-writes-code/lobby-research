@@ -4,12 +4,16 @@ import { useEffect, useState } from "react";
 import SearchForm from "./SearchForm";
 import SidePanel from "./SidePanel";
 import TextArea from "./TextArea";
+import ReportButton from "./ReportButton";
+import { useReports } from "../_context/ReportsContext";
 
-interface Props {
+interface ContentAreaProps {
   content: { date: Date; content: string | null }[];
 }
 
-const ContentArea = ({ content }: Props) => {
+const ContentArea = ({ content }: ContentAreaProps) => {
+  const { setActivePage, setSharedContent } = useReports();
+
   const [filteredContent, setFilteredContent] =
     useState<{ date: Date; content: string | null }[]>(content);
 
@@ -45,6 +49,11 @@ const ContentArea = ({ content }: Props) => {
     setFilteredContent(filteredContent);
   };
 
+  const handleReportCreate = () => {
+    setActivePage("create");
+    setSharedContent(filteredContent);
+  };
+
   return (
     <div className="relative mt-4">
       <div className="grid grid-cols-7 gap-4">
@@ -68,6 +77,9 @@ const ContentArea = ({ content }: Props) => {
             ))}
         </div>
       </div>
+      {!!filteredContent.length && (
+        <ReportButton handleClick={handleReportCreate} />
+      )}
     </div>
   );
 };
