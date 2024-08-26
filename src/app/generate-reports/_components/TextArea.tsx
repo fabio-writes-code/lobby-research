@@ -10,7 +10,7 @@ interface TextAreaProps {
 
 const TextArea = ({ id, content }: TextAreaProps) => {
   return (
-    <div id={id} className="mt-3 rounded-md border shadow-sm">
+    <div id={id} className="rounded-md border shadow-sm">
       <ScrollArea className="h-96 p-4">
         <ReactMarkdown
           components={{

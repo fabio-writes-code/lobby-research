@@ -4,20 +4,20 @@ import React from "react";
 import { createContext, useContext, useState } from "react";
 
 interface ReportsContextType {
-  activePage: "search" | "create";
-  setActivePage: (page: "search" | "create") => void;
-  sharedContent: { date: Date; content: string | null }[];
-  setSharedContent: (content: { date: Date; content: string | null }[]) => void;
+  createActive: boolean;
+  setCreateActive: (createActive: boolean) => void;
+  printContent: string;
+  setPrintContent: (content: string) => void;
 }
 
 // Default values for the context
 const defaultContext: ReportsContextType = {
-  activePage: "search",
-  setActivePage: () => {
+  createActive: false,
+  setCreateActive: () => {
     /* No operation (no-op) */
   },
-  sharedContent: [],
-  setSharedContent: () => {
+  printContent: "",
+  setPrintContent: () => {
     /* No operation (no-op) */
   },
 };
@@ -27,16 +27,16 @@ const ReportsContext = createContext<ReportsContextType>(defaultContext);
 const ReportsProvider = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
-  const [activePage, setActivePage] = useState<"search" | "create">(
-    defaultContext.activePage,
+  const [createActive, setCreateActive] = useState<boolean>(
+    defaultContext.createActive,
   );
-  const [sharedContent, setSharedContent] = useState<
-    { date: Date; content: string | null }[]
-  >(defaultContext.sharedContent);
+  const [printContent, setPrintContent] = useState<string>(
+    defaultContext.printContent,
+  );
 
   return (
     <ReportsContext.Provider
-      value={{ activePage, setActivePage, sharedContent, setSharedContent }}
+      value={{ createActive, setCreateActive, printContent, setPrintContent }}
     >
       <div>{children}</div>
     </ReportsContext.Provider>

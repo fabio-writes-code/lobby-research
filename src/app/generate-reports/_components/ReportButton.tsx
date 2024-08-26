@@ -14,7 +14,10 @@ const ReportButton = ({ handleClick }: ReportButtonProps) => {
   };
 
   return (
-    <Button onClick={handleReport} className="fixed bottom-6 right-6 h-14 w-14">
+    <Button
+      onClick={handleReport}
+      className="absolute bottom-6 right-6 h-14 w-14"
+    >
       <FileCheck2 />
     </Button>
   );
