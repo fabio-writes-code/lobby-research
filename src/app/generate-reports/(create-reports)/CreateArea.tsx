@@ -10,20 +10,21 @@ const CreateArea = () => {
 
   const { textArray } = useTextArray();
 
-  console.log("TextArray", textArray);
-
   return (
-    <>
+    <div className="container">
       {sharedContent.map((textContent, index) => (
-        <div key={index} className="">
-          {textContent.date.toDateString()}
+        <div key={index} className="border-b-2 border-gray-300 py-5">
+          <h3 className="pb-5 text-xl">{textContent.date.toDateString()}</h3>
 
-          <div className="grid grid-cols-6 gap-4">
-            <HansardDocument content={textContent.content} />
+          <div className="">
+            <HansardDocument
+              content={textContent.content}
+              date={textContent.date.toDateString()}
+            />
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 };
 

@@ -4,8 +4,12 @@ import React from "react";
 import { createContext, useContext, useState } from "react";
 
 interface TextArrayContextType {
-  textArray: Record<string, string[] | null>;
-  setTextArray: (content: Record<string, string[] | null>) => void;
+  textArray: Record<string, Record<number, string>>;
+  setTextArray:
+    | React.Dispatch<
+        React.SetStateAction<Record<string, Record<number, string>>>
+      >
+    | (() => void);
 }
 
 const defaultContext: TextArrayContextType = {
@@ -20,9 +24,9 @@ const TextArrayContext = createContext<TextArrayContextType>(defaultContext);
 const TextArrayProvider = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
-  const [textArray, setTextArray] = useState<Record<string, string[] | null>>(
-    defaultContext.textArray,
-  );
+  const [textArray, setTextArray] = useState<
+    Record<string, Record<number, string>>
+  >(defaultContext.textArray);
 
   return (
     <TextArrayContext.Provider value={{ textArray, setTextArray }}>
