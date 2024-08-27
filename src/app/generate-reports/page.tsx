@@ -10,7 +10,6 @@ import DocNav from "./_components/DocNav";
 import ReportButton from "./_components/ReportButton";
 import PrintButton from "./_components/PrintButton";
 import MarkdownIt from "markdown-it";
-import jsPDF from "jspdf";
 import html2pdf from "html2pdf.js";
 
 export default function SearchReportsPage() {
