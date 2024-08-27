@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import ContentArea from "./(search-reports)/ContentArea";
-import DateForm from "./(search-reports)/DateForm";
+import ContentArea from "./_components/ContentArea";
+import DateForm from "./_components/DateForm";
 import { useReports } from "./_context/ReportsContext";
-import CreateArea from "./(search-reports)/CreateArea";
-import SearchForm from "./(search-reports)/SearchForm";
-import DocNav from "./(search-reports)/DocNav";
-import ReportButton from "./(search-reports)/ReportButton";
+import CreateArea from "./_components/CreateArea";
+import SearchForm from "./_components/SearchForm";
+import DocNav from "./_components/DocNav";
+import ReportButton from "./_components/ReportButton";
+import PrintButton from "./_components/PrintButton";
+import MarkdownIt from "markdown-it";
+import jsPDF from "jspdf";
+import html2pdf from "html2pdf.js";
 
 export default function SearchReportsPage() {
   const [content, setContent] = useState<
@@ -45,10 +49,44 @@ export default function SearchReportsPage() {
     setFilteredContent(filteredContent);
   };
 
-  const { createActive, setCreateActive } = useReports();
+  const handlePrintContent = async () => {
+    const md = new MarkdownIt();
+    const htmlContent = md.render(printContent);
+
+    const styles = `
+    <style>
+      body { font-family: Arial, sans-serif; }
+      h1, h2, h3, h4, h5, h6 { page-break-before: avoid; }
+      h1 { font-size: 2em; }
+      p { margin: 0; }
+      .pdf-content { padding: 20px; }
+    </style>
+  `;
+
+    const options = {
+      margin: 10,
+      filename: "document.pdf",
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+
+    const html = document.createElement("div");
+    html.innerHTML =
+      styles + '<div class="pdf-content">' + htmlContent + "</div>";
+
+    html2pdf()
+      .from(html)
+      .set(options)
+      .save()
+      .then(() => {
+        document.body.removeChild(html);
+      });
+  };
+
+  const { printContent, createActive, setCreateActive } = useReports();
 
   return (
-    <div className="position-relative container flex flex-col gap-4">
+    <div className="h-100 container relative flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <DateForm setContent={setContent} />
         <SearchForm
@@ -71,11 +109,12 @@ export default function SearchReportsPage() {
           />
         </div>
         {createActive && <CreateArea />}
-
-        {!!content.length && !createActive && (
-          <ReportButton handleClick={() => setCreateActive(true)} />
-        )}
       </div>
+      {!!content.length && !createActive && (
+        <ReportButton handleClick={() => setCreateActive(true)} />
+      )}
+
+      {printContent.length && <PrintButton handleClick={handlePrintContent} />}
     </div>
   );
 }
