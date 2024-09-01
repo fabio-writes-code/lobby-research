@@ -27,6 +27,16 @@ export default function Navbar() {
           <BarChartIcon className="h-5 w-5" />
           <span>Generate Reports</span>
         </Link>
+        <Link
+          href="/api/auth/signout"
+          className={
+            "rounded-md px-3 py-2 text-left hover:bg-muted dark:hover:bg-[#334155] " +
+            linkClasses
+          }
+        >
+          <BarChartIcon className="h-5 w-5" />
+          <span>Sign Out</span>
+        </Link>
       </div>
     </nav>
   );

@@ -42,4 +42,15 @@ export const hansardDocument = createTable("hansard_document", {
     .notNull(),
   content: text("content"),
   hansard_date: date("hansard_date", { mode: "date" }).notNull(),
+  hansard_id: text("hansard_id").notNull(),
+});
+
+export const users = createTable("users", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  email: text("email").notNull(),
+  name: text("name"),
+  password: text("password"),
+  role: text("role"),
 });

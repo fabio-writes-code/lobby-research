@@ -20,6 +20,7 @@
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@t3-oss/env-nextjs": "^0.10.1",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -31,6 +32,7 @@
     "lucide-react": "^0.424.0",
     "markdown-it": "^14.1.0",
     "next": "^14.2.4",
+    "next-auth": "5.0.0-beta.20",
     "postgres": "^3.4.4",
     "react": "^18.3.1",
     "react-day-picker": "8.10.1",
@@ -46,6 +48,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/eslint": "^8.56.10",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^20.14.10",
