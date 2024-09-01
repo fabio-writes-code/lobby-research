@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import NextAuth, { DefaultSession, User } from "next-auth";
+import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { LoginFormSchema } from "~/app/validationSchemas";
 import { db } from "~/server/db";
@@ -38,7 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .execute()
             .then((user) => user[0]);
 
-          if (!user || !user.password) throw new Error("Invalid credentials");
+          if (!user?.password) throw new Error("Invalid credentials");
 
           const passwordMatch = await bcrypt.compare(password, user.password);
 

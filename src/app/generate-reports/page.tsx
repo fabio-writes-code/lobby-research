@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ContentArea from "./_components/ContentArea";
 import DateForm from "./_components/DateForm";
 import { useReports } from "./_context/ReportsContext";
@@ -10,7 +10,12 @@ import DocNav from "./_components/DocNav";
 import ReportButton from "./_components/ReportButton";
 import PrintButton from "./_components/PrintButton";
 import MarkdownIt from "markdown-it";
+// import dynamic from "next/dynamic";
 import html2pdf from "html2pdf.js";
+
+// const html2pdf = dynamic(() => import("html2pdf.js"), {
+//   ssr: false,
+// });
 
 export default function SearchReportsPage() {
   const [content, setContent] = useState<
@@ -73,13 +78,20 @@ export default function SearchReportsPage() {
     html.innerHTML =
       styles + '<div class="pdf-content">' + htmlContent + "</div>";
 
-    html2pdf()
-      .from(html)
-      .set(options)
-      .save()
-      .then(() => {
-        document.body.removeChild(html);
-      });
+    import("html2pdf.js")
+      .then((html2pdf) => {
+        html2pdf()
+          .from(html)
+          .set(options)
+          .save()
+          .then(() => {
+            document.body.removeChild(html);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+      .catch((err) => console.error(err));
   };
 
   const { printContent, createActive, setCreateActive } = useReports();
