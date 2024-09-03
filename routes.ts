@@ -4,7 +4,7 @@
  * @type {string[]}
  */
 
-export const publicRoutes = ["/auth/signIn"];
+export const publicRoutes = ["/auth/sign-in", "/auth/register"];
 
 /**
  * An array of routes used for authentication purposes
@@ -12,7 +12,18 @@ export const publicRoutes = ["/auth/signIn"];
  * @type {string[]}
  */
 
-export const authRoutes: string[] = ["/auth/signIn", "/error"];
+export const authRoutes: string[] = [
+  "/auth/sign-in",
+  "/auth/register",
+  "/api/users/userRegister",
+  "/api/signIn",
+  "/error",
+  "/auth/reset",
+  "/api/users/reset-password-token",
+  "/api/send_password_reset",
+  "/auth/passwordReset",
+  "/api/users/password-reset",
+];
 
 /**
  * Prefix for all API authentication routes
@@ -26,4 +37,4 @@ export const apiAuthPrefix = "/api/auth";
  * @type {string}
  */
 
-export const DEFAULT_REDIRECT = "/";
+export const DEFAULT_REDIRECT = "/contacts/list";

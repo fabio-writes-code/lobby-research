@@ -1,18 +1,14 @@
+import { auth } from "~/auth";
 import {
   publicRoutes,
   authRoutes,
   apiAuthPrefix,
   DEFAULT_REDIRECT,
-} from "routes";
+} from "../routes";
 import { NextRequest, NextResponse } from "next/server";
 
-import authConfig from "./server/auth.config";
-import NextAuth from "next-auth";
-
-const { auth } = NextAuth(authConfig);
-
 export default auth((req) => {
-  console.log("isLoggedIn");
+  console.log("repeat");
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
@@ -26,6 +22,9 @@ export default auth((req) => {
 
   if (isAuthRoute && isLoggedIn)
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
+
+  if (req.nextUrl.pathname.startsWith("/api/admin/users/") && !isLoggedIn)
+    return undefined;
 
   if (!isLoggedIn && !isPublicRoute)
     return NextResponse.redirect(new URL("/auth/sign-in", nextUrl.origin));
