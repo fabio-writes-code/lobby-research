@@ -5,10 +5,9 @@ import {
   apiAuthPrefix,
   DEFAULT_REDIRECT,
 } from "../routes";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export default auth((req) => {
-  console.log("repeat");
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 

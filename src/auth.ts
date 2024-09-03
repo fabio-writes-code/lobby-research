@@ -1,4 +1,4 @@
-import NextAuth, { DefaultSession, User } from "next-auth";
+import NextAuth, { type DefaultSession, type User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -54,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             .execute()
             .then((user) => user[0]);
 
-          if (!user || !user.password) {
+          if (!user?.password) {
             throw new Error("User nof found");
           }
 

@@ -1,0 +1,36 @@
+"use server";
+
+import { LoginFormSchema } from "~/app/validationSchemas";
+import { signIn } from "~/auth";
+import { AuthError } from "next-auth";
+import type * as z from "zod";
+import { DEFAULT_REDIRECT } from "routes";
+
+export const signInAction = async (values: z.infer<typeof LoginFormSchema>) => {
+  const validatedFields = LoginFormSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return { error: "Invalid Fields" };
+  }
+
+  const { email, password } = validatedFields.data;
+
+  try {
+    await signIn("credentials", {
+      email: email,
+      password: password,
+      redirectTo: DEFAULT_REDIRECT,
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CallbackRouteError" || "CredentialsSignin":
+          return { error: "Invalid credentials" };
+        default:
+          return { error: "An error occurred" };
+      }
+    }
+
+    throw error;
+  }
+};

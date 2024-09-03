@@ -1,8 +1,4 @@
 import Link from "next/link";
-import { SyntheticEvent } from "react";
-import { db } from "~/server/db";
-import { hansardDocument } from "~/server/db/schema";
-import { Dashboard } from "~/components/component/dashboard";
 
 export default async function HomePage() {
   // const document = await db.select().from(hansardDocument);

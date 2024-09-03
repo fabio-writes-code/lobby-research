@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { signInAction } from "~/actions/signIn";
 import { LoginFormSchema } from "~/app/validationSchemas";
 import { Button } from "~/components/ui/button";
 import {
@@ -32,14 +33,22 @@ export default function SignInPage() {
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>("");
 
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit = form.handleSubmit(async (data) => {
+    setError("");
     console.log(data);
+    startTransition(() => {
+      signInAction(data)
+        .then((response) => setError(response?.error))
+        .catch(console.error);
+    });
   });
 
   return (
     <div className="flex h-5/6 items-center justify-center bg-background">
+      {error && <div>{error}</div>}
       <Card className="w-[36rem]">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
@@ -77,8 +86,8 @@ export default function SignInPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Logging in..." : "Login"}
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "Logging in..." : "Login"}
               </Button>
             </form>
           </Form>

@@ -16,7 +16,6 @@ export const authRoutes: string[] = [
   "/auth/sign-in",
   "/auth/register",
   "/api/users/userRegister",
-  "/api/signIn",
   "/error",
   "/auth/reset",
   "/api/users/reset-password-token",
@@ -37,4 +36,4 @@ export const apiAuthPrefix = "/api/auth";
  * @type {string}
  */
 
-export const DEFAULT_REDIRECT = "/contacts/list";
+export const DEFAULT_REDIRECT = "/";

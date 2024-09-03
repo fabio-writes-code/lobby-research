@@ -31,7 +31,7 @@ export default function SearchReportsPage() {
 
       const regex = new RegExp(`(${pills.join("|")})`, "gi");
 
-      const paragraphs = text.split("\n");
+      const paragraphs = text.split("\n\n");
 
       const filtered = paragraphs
         .filter((paragraph) =>
@@ -42,7 +42,7 @@ export default function SearchReportsPage() {
         .map((paragraph) =>
           paragraph.replace(regex, (match) => `\`${match}\``),
         );
-      return filtered.join("\n");
+      return filtered.join("\n\n");
     }
 
     const filteredContent = content.map((content) => ({
@@ -78,20 +78,16 @@ export default function SearchReportsPage() {
     html.innerHTML =
       styles + '<div class="pdf-content">' + htmlContent + "</div>";
 
-    import("html2pdf.js")
-      .then((html2pdf) => {
-        html2pdf()
-          .from(html)
-          .set(options)
-          .save()
-          .then(() => {
-            document.body.removeChild(html);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+    html2pdf()
+      .from(html)
+      .set(options)
+      .save()
+      .then(() => {
+        document.body.removeChild(html);
       })
-      .catch((err) => console.error(err));
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const { printContent, createActive, setCreateActive } = useReports();

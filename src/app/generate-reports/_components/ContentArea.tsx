@@ -1,5 +1,6 @@
 "use client";
 
+import { Separator } from "~/components/ui/separator";
 import TextArea from "./TextArea";
 
 interface ContentAreaProps {
@@ -11,12 +12,19 @@ const ContentArea = ({ content }: ContentAreaProps) => {
     <div className="relative">
       <div className="">
         {!!content.length &&
-          content.map((content) => (
-            <TextArea
-              id={content.date.toDateString().replaceAll(/\s/g, "")}
-              key={content.date.toDateString()}
-              content={content.content!.split("\n")}
-            />
+          content.map((content, index) => (
+            <div key={index}>
+              <div className="my-4">
+                <h3 className="mb-2 text-lg font-bold">
+                  {content.date.toUTCString().split("00")[0]}
+                </h3>
+                <Separator />
+              </div>
+              <TextArea
+                id={content.date.toDateString().replaceAll(/\s/g, "")}
+                content={content.content!.split("\n\n")}
+              />
+            </div>
           ))}
       </div>
     </div>

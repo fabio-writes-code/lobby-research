@@ -36,22 +36,20 @@ const ContentArea = ({ content }: Props) => {
 
       <ReactMarkdown
         components={{
-          h1: ({ node, ...props }) => (
+          h1: ({ ...props }) => (
             <h1 className="my-4 text-3xl font-bold" {...props} />
           ),
-          h2: ({ node, ...props }) => (
+          h2: ({ ...props }) => (
             <h2 className="my-3 text-2xl font-semibold" {...props} />
           ),
-          p: ({ node, ...props }) => (
+          p: ({ ...props }) => (
             <p className="my-2 text-base text-gray-700" {...props} />
           ),
-          li: ({ node, ...props }) => (
-            <li className="ml-4 list-disc" {...props} />
-          ),
-          a: ({ node, ...props }) => (
+          li: ({ ...props }) => <li className="ml-4 list-disc" {...props} />,
+          a: ({ ...props }) => (
             <a className="text-blue-500 hover:text-blue-700" {...props} />
           ),
-          code: ({ node, ...props }) => (
+          code: ({ ...props }) => (
             <code className="rounded bg-gray-100 p-2 text-sm" {...props} />
           ),
         }}
