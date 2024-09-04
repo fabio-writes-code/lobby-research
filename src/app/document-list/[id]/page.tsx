@@ -1,9 +1,8 @@
-import ContentArea from "./ContentArea";
-import initContent from "./content";
+import { eq } from "drizzle-orm";
 import { cache } from "react";
 import { db } from "~/server/db";
 import { hansardDocument } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import ContentArea from "./ContentArea";
 
 interface Props {
   params: {
@@ -21,19 +20,12 @@ const fetchDocument = cache(
 
 export default async function documentList({ params }: Props) {
   const hansardDocument = await fetchDocument(params.id);
-  // const tempText = initContent;
 
   const content = hansardDocument[0]?.content?.split("\n\n");
 
-  // const parsedContent = await remark().use(html).process(tempText);
   return (
-    <>
+    <div className="ml-64">
       <ContentArea content={content!} />
-      {/* <div
-        className=""
-        dangerouslySetInnerHTML={{ __html: parsedContent.toString() }}
-      ></div> */}
-      {/* <ReactMarkdown>{tempText}</ReactMarkdown> */}
-    </>
+    </div>
   );
 }

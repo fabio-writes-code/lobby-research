@@ -7,7 +7,7 @@ export default async function HomePage() {
   // const contentArray = document[0]?.content?.split("\n");
 
   return (
-    <main className="flex min-h-screen">
+    <main className="flex h-full">
       <Link href="/document-list/1">Document List</Link>
     </main>
   );

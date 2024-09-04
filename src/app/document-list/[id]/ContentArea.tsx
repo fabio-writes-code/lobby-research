@@ -1,8 +1,9 @@
 "use client";
 
-import { SearchIcon } from "lucide-react";
+import { ArrowUp, SearchIcon } from "lucide-react";
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 
 interface Props {
@@ -10,6 +11,21 @@ interface Props {
 }
 
 const ContentArea = ({ content }: Props) => {
+  const [showScrollTop, setShowScrollTop] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const [searchTerm, setSearchTerm] = React.useState<string>("");
   const [filteredContent, setFilteredContent] =
     React.useState<string[]>(content);
@@ -56,6 +72,16 @@ const ContentArea = ({ content }: Props) => {
       >
         {filteredContent.join("\n\n")}
       </ReactMarkdown>
+
+      {showScrollTop && (
+        <Button
+          className="fixed bottom-4 right-4 rounded-full p-2"
+          onClick={scrollTop}
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="h-6 w-6" />
+        </Button>
+      )}
     </div>
   );
 };

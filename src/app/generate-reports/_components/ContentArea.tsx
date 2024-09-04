@@ -10,23 +10,21 @@ interface ContentAreaProps {
 const ContentArea = ({ content }: ContentAreaProps) => {
   return (
     <div className="relative">
-      <div className="">
-        {!!content.length &&
-          content.map((content, index) => (
-            <div key={index}>
-              <div className="my-4">
-                <h3 className="mb-2 text-lg font-bold">
-                  {content.date.toUTCString().split("00")[0]}
-                </h3>
-                <Separator />
-              </div>
-              <TextArea
-                id={content.date.toDateString().replaceAll(/\s/g, "")}
-                content={content.content!.split("\n\n")}
-              />
+      {!!content.length &&
+        content.map((content, index) => (
+          <div
+            key={index}
+            id={content.date.toDateString().replaceAll(/\s/g, "")}
+          >
+            <div className="my-4">
+              <h3 className="mb-2 text-lg font-bold">
+                {content.date.toUTCString().split("00")[0]}
+              </h3>
+              <Separator />
             </div>
-          ))}
-      </div>
+            <TextArea content={content.content!.split("\n\n")} />
+          </div>
+        ))}
     </div>
   );
 };

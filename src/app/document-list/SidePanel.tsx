@@ -1,17 +1,13 @@
 import { FileText } from "lucide-react";
 import Link from "next/link";
-import { db } from "~/server/db";
-import { hansardDocument } from "~/server/db/schema";
 
-export default async function SidePanel() {
-  const hansardIds = await db
-    .select({
-      id: hansardDocument.hansard_id,
-      date: hansardDocument.hansard_date,
-    })
-    .from(hansardDocument);
+interface SidePanelProps {
+  hansardIds: { id: string; date: Date }[];
+}
+
+export default async function SidePanel({ hansardIds }: SidePanelProps) {
   return (
-    <div className="flex flex-col items-start gap-2 border-r bg-background p-4 dark:bg-[#0f172a]">
+    <aside className="fixed bottom-0 left-0 top-16 w-64 overflow-y-auto bg-muted p-4">
       {hansardIds.map((hansardId) => (
         <Link
           key={hansardId.id}
@@ -22,6 +18,6 @@ export default async function SidePanel() {
           <span>{hansardId.date.toUTCString().split("00")[0]}</span>
         </Link>
       ))}
-    </div>
+    </aside>
   );
 }

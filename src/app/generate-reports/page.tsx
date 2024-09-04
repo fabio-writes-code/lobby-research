@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ContentArea from "./_components/ContentArea";
-import DateForm from "./_components/DateForm";
-import { useReports } from "./_context/ReportsContext";
 import CreateArea from "./_components/CreateArea";
-import SearchForm from "./_components/SearchForm";
+import DateForm from "./_components/DateForm";
 import DocNav from "./_components/DocNav";
-import ReportButton from "./_components/ReportButton";
 import PrintButton from "./_components/PrintButton";
-import MarkdownIt from "markdown-it";
+import ReportButton from "./_components/ReportButton";
+import SearchForm from "./_components/SearchForm";
+import { useReports } from "./_context/ReportsContext";
 // import dynamic from "next/dynamic";
-import html2pdf from "html2pdf.js";
+
+import { Separator } from "~/components/ui/separator";
 
 // const html2pdf = dynamic(() => import("html2pdf.js"), {
 //   ssr: false,
@@ -53,75 +53,72 @@ export default function SearchReportsPage() {
     setFilteredContent(filteredContent);
   };
 
-  const handlePrintContent = async () => {
-    const md = new MarkdownIt();
-    const htmlContent = md.render(printContent);
+  const { printContent, createActive } = useReports();
 
-    const styles = `
-    <style>
-      body { font-family: Arial, sans-serif; }
-      h1, h2, h3, h4, h5, h6 { page-break-before: avoid; }
-      h1 { font-size: 2em; }
-      p { margin: 0; }
-      .pdf-content { padding: 20px; }
-    </style>
-  `;
+  // Ref areas
+  const mainAreaRef = useRef<HTMLDivElement>(null);
+  const textAreaRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-    const options = {
-      margin: 10,
-      filename: "document.pdf",
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
+  useEffect(() => {
+    content.forEach((area) => {
+      textAreaRefs.current[area.date.toDateString().replaceAll(/\s/g, "")] =
+        document.getElementById(
+          area.date.toDateString().replaceAll(/\s/g, ""),
+        ) as HTMLDivElement;
+    });
+  }, [content]);
 
-    const html = document.createElement("div");
-    html.innerHTML =
-      styles + '<div class="pdf-content">' + htmlContent + "</div>";
-
-    html2pdf()
-      .from(html)
-      .set(options)
-      .save()
-      .then(() => {
-        document.body.removeChild(html);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const scrollToArea = (id: string) => {
+    const element = textAreaRefs.current[id];
+    if (element && mainAreaRef.current) {
+      const topPosition = element.offsetTop - mainAreaRef.current.offsetTop;
+      console.log(id, topPosition);
+      mainAreaRef.current.scrollTo({ top: topPosition, behavior: "smooth" });
+    }
   };
 
-  const { printContent, createActive, setCreateActive } = useReports();
-
   return (
-    <div className="h-100 container relative flex flex-col gap-4">
-      <div className="flex flex-col gap-4">
-        <DateForm setContent={setContent} />
+    <div className="h-100 relative mt-4">
+      <div className="flex flex-col gap-2">
+        <aside className="fixed bottom-0 left-0 top-16 w-64 overflow-y-auto bg-muted p-4">
+          <DateForm setContent={setContent} />
+          <Separator />
+          {!!content.length && (
+            <div className="col-span-1">
+              <DocNav
+                contentArray={content.map((content) => content.date)}
+                scrollToArea={scrollToArea}
+              />
+            </div>
+          )}
+        </aside>
+      </div>
+
+      {/* main area */}
+      <div className="ml-64 px-6">
+        {/* search bar */}
         <SearchForm
           isContent={!!content.length}
           setSearchArray={handleSearchArrayChange}
         />
-        {!!content.length && (
-          <div className="col-span-1">
-            <DocNav contentArray={content.map((content) => content.date)} />
+
+        {/* Content Area */}
+        <div
+          className={`grid ${createActive ? "grid-cols-2" : "grid-cols-1"} gap-2`}
+        >
+          <div className="grid grid-cols-1" ref={mainAreaRef}>
+            <ContentArea
+              content={filteredContent.length ? filteredContent : content}
+            />
           </div>
-        )}
-      </div>
-
-      <div
-        className={`grid ${createActive ? "grid-cols-2" : "grid-cols-1"} gap-2`}
-      >
-        <div className="grid grid-cols-1">
-          <ContentArea
-            content={filteredContent.length ? filteredContent : content}
-          />
+          {createActive && <CreateArea />}
         </div>
-        {createActive && <CreateArea />}
       </div>
-      {!!content.length && !createActive && (
-        <ReportButton handleClick={() => setCreateActive(true)} />
-      )}
 
-      {printContent.length && <PrintButton handleClick={handlePrintContent} />}
+      {/* Absolutely Positioned Buttons */}
+      {!!content.length && !createActive && <ReportButton />}
+
+      {!!printContent.length && <PrintButton />}
     </div>
   );
 }

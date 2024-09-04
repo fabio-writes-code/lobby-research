@@ -4,7 +4,7 @@ export default function ReportsLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="h-100">
+    <div className="mt-16">
       <ReportsProvider>{children}</ReportsProvider>
     </div>
   );

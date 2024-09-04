@@ -1,4 +1,4 @@
-import NextAuth, { type DefaultSession, type User } from "next-auth";
+import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -24,23 +24,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      // authorize: async (credentials) => {
-      //   console.log('Credentials', credentials);
-
-      //   try {
-      //     const user = await db
-      //       .select()
-      //       .from(users)
-      //       .where(eq(users.email.getSQL(), credentials.email))
-      //       .execute();
-
-      //     return user[0] as User;
-      //   } catch (error) {
-      //     console.error('there as an error');
-      //     throw new Error('Invalid email or password from server');
-      //     return null;
-      //   }
-      // },
       authorize: async (credentials) => {
         const validatedFields = LoginFormSchema.safeParse(credentials);
 

@@ -3,19 +3,14 @@
 import { FileCheck2 } from "lucide-react";
 import React from "react";
 import { Button } from "~/components/ui/button";
+import { useReports } from "../_context/ReportsContext";
 
-interface ReportButtonProps {
-  handleClick: () => void;
-}
-
-const ReportButton = ({ handleClick }: ReportButtonProps) => {
-  const handleReport = () => {
-    handleClick();
-  };
+const ReportButton = () => {
+  const { setCreateActive } = useReports();
 
   return (
     <Button
-      onClick={handleReport}
+      onClick={() => setCreateActive(true)}
       className="container fixed bottom-6 right-6 h-14 w-14"
     >
       <FileCheck2 />

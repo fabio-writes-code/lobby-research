@@ -1,19 +1,26 @@
+import { Button } from "~/components/ui/button";
+
 interface SidePanelProps {
   contentArray: Date[];
+  scrollToArea: (id: string) => void;
 }
 
-export default function DocNav({ contentArray }: SidePanelProps) {
+export default function DocNav({ contentArray, scrollToArea }: SidePanelProps) {
   return (
-    <div className="flex w-full gap-4">
+    <div className="flex w-full flex-col gap-4">
       {contentArray.map((content, index) => (
-        <a
+        <Button
           key={index}
-          href={`#${content.toDateString().replaceAll(/\s/g, "")}`}
-          className="w-fit justify-start gap-2 rounded-md px-2 py-2 text-left text-sm font-medium text-primary shadow-md hover:bg-muted dark:hover:bg-[#334155]"
+          onClick={() =>
+            scrollToArea(content.toDateString().replaceAll(/\s/g, ""))
+          }
+          variant={"ghost"}
+          // href={`#${content.toDateString().replaceAll(/\s/g, "")}`}
+          className="w-full justify-start gap-2 rounded-md px-2 py-2 text-left text-sm font-medium text-primary shadow-md hover:bg-muted dark:hover:bg-[#334155]"
         >
           {/* <CalendarIcon className="h-5 w-5 grid-cols-1" /> */}
           <span>{content.toUTCString().split("00")[0]}</span>
-        </a>
+        </Button>
       ))}
     </div>
   );

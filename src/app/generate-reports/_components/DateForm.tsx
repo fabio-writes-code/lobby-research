@@ -71,16 +71,16 @@ export default function DateForm({ setContent }: DateFormProps) {
 
   return (
     <>
-      <div className="my-auto ms-0">
+      <div className="my-auto mb-2 ms-0">
         <Form {...form}>
-          <form onSubmit={handleSubmit} className="pt-4">
-            <div className="flex flex-wrap items-end justify-start gap-2 sm:gap-6">
-              <div className="gap-4 space-y-2">
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-wrap items-end justify-start gap-2">
+              <div className="">
                 <FormField
                   control={form.control}
                   name="startDate"
                   render={({ field }) => (
-                    <FormItem className="flex items-center gap-4">
+                    <FormItem className="flex items-center gap-2">
                       <FormLabel>Start Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -88,7 +88,7 @@ export default function DateForm({ setContent }: DateFormProps) {
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
+                                "w-[180px] pl-3 text-left font-normal",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -118,12 +118,12 @@ export default function DateForm({ setContent }: DateFormProps) {
                   )}
                 />
               </div>
-              <div className="gap-4 space-y-2">
+              <div className="">
                 <FormField
                   control={form.control}
                   name="endDate"
                   render={({ field }) => (
-                    <FormItem className="flex items-center gap-4">
+                    <FormItem className="flex items-center gap-2">
                       <FormLabel>End Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -131,7 +131,7 @@ export default function DateForm({ setContent }: DateFormProps) {
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
+                                "w-[180px] pl-3 text-left font-normal",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -161,7 +161,7 @@ export default function DateForm({ setContent }: DateFormProps) {
                   )}
                 />
               </div>
-              <Button className="w-full sm:w-fit" type="submit">
+              <Button className="w-full" type="submit">
                 Retrieve Documents
               </Button>
             </div>
