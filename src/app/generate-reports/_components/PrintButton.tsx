@@ -1,27 +1,40 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 "use client";
 
 import { NotebookPen } from "lucide-react";
 import MarkdownIt from "markdown-it";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { useReports } from "../_context/ReportsContext";
-import html2pdf from "html2pdf.js";
 
 const PrintButton = () => {
   const { printContent } = useReports();
+  const [html2pdf, setHtml2pdf] = useState<unknown>(null);
+
+  useEffect(() => {
+    // Dynamically import html2pdf only on the client side
+    void import("html2pdf.js").then((module) => {
+      setHtml2pdf(() => module.default);
+    });
+  }, []);
 
   const handlePrintContent = async () => {
+    if (!html2pdf) {
+      console.error("html2pdf is not loaded yet.");
+      return;
+    }
+
     const md = new MarkdownIt();
     const htmlContent = md.render(printContent);
 
     const styles = `
     <style>
-      body { font-family: Arial, sans-serif; }
-      h1, h2, h3, h4, h5, h6 { page-break-before: avoid; }
+      body { font-family: Times New Roman, serif; }
+      h1, h2, h3, h4, h5, h6 { page-break-before: avoid; font-weight: bold; }
       h1 { font-size: 2em; }
-      p { margin: 0; }
+      h2 { font-size: 1.5em; }
+      h3 { font-size: 1.17em; }
+      p { margin: 0; text-align: justify; page-break-inside: avoid; }
       .pdf-content { padding: 20px; }
     </style>
   `;
@@ -31,12 +44,14 @@ const PrintButton = () => {
       filename: "document.pdf",
       html2canvas: { scale: 2 },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["avoid-all"] },
     };
 
     const html = document.createElement("div");
     html.innerHTML =
       styles + '<div class="pdf-content">' + htmlContent + "</div>";
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     html2pdf()
       .from(html)
       .set(options)

@@ -12,7 +12,7 @@ export default function DocNav({ contentArray, scrollToArea }: SidePanelProps) {
         <Button
           key={index}
           onClick={() =>
-            scrollToArea(content.toDateString().replaceAll(/\s/g, ""))
+            scrollToArea(content.toDateString().replaceAll(/\s/g, "") + index)
           }
           variant={"ghost"}
           // href={`#${content.toDateString().replaceAll(/\s/g, "")}`}

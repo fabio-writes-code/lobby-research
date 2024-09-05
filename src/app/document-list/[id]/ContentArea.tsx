@@ -39,6 +39,16 @@ const ContentArea = ({ content }: Props) => {
     setSearchTerm(e.value);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchTerm) {
+      const regex = new RegExp(searchTerm, "gi");
+      const highlightedContent = filteredContent.map((line) =>
+        line.replace(regex, (match) => `\`${match}\``),
+      );
+      setFilteredContent(highlightedContent);
+    }
+  };
+
   return (
     <div className="relative mx-6">
       <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground dark:text-[#94a3b8]" />
@@ -47,6 +57,7 @@ const ContentArea = ({ content }: Props) => {
         placeholder="Search..."
         className="w-full rounded-md bg-muted pl-8 dark:bg-[#1e293b] dark:text-[#94a3b8]"
         onChange={(e) => handleInputBoxChange(e.target)}
+        onKeyDown={(e) => handleKeyDown(e)}
         value={searchTerm}
       />
 
@@ -66,7 +77,7 @@ const ContentArea = ({ content }: Props) => {
             <a className="text-blue-500 hover:text-blue-700" {...props} />
           ),
           code: ({ ...props }) => (
-            <code className="rounded bg-gray-100 p-2 text-sm" {...props} />
+            <span className="rounded bg-yellow-200" {...props} />
           ),
         }}
       >

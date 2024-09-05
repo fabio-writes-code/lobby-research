@@ -14,10 +14,10 @@ const TextArea = ({ content }: TextAreaProps) => {
         <ReactMarkdown
           components={{
             h1: ({ ...props }) => (
-              <h1 className="my-4 text-3xl font-bold" {...props} />
+              <p className="my-4 text-xl font-bold" {...props} />
             ),
             h2: ({ ...props }) => (
-              <h2 className="my-3 text-2xl font-semibold" {...props} />
+              <p className="my-3 text-lg font-semibold" {...props} />
             ),
             p: ({ ...props }) => (
               <p className="my-2 text-base text-gray-700" {...props} />

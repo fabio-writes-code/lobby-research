@@ -9,13 +9,7 @@ import PrintButton from "./_components/PrintButton";
 import ReportButton from "./_components/ReportButton";
 import SearchForm from "./_components/SearchForm";
 import { useReports } from "./_context/ReportsContext";
-// import dynamic from "next/dynamic";
-
 import { Separator } from "~/components/ui/separator";
-
-// const html2pdf = dynamic(() => import("html2pdf.js"), {
-//   ssr: false,
-// });
 
 export default function SearchReportsPage() {
   const [content, setContent] = useState<
@@ -60,20 +54,19 @@ export default function SearchReportsPage() {
   const textAreaRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
-    content.forEach((area) => {
-      textAreaRefs.current[area.date.toDateString().replaceAll(/\s/g, "")] =
-        document.getElementById(
-          area.date.toDateString().replaceAll(/\s/g, ""),
-        ) as HTMLDivElement;
+    content.forEach((area, index) => {
+      textAreaRefs.current[
+        area.date.toDateString().replaceAll(/\s/g, "") + index
+      ] = document.getElementById(
+        area.date.toDateString().replaceAll(/\s/g, "") + index,
+      ) as HTMLDivElement;
     });
   }, [content]);
 
   const scrollToArea = (id: string) => {
     const element = textAreaRefs.current[id];
     if (element && mainAreaRef.current) {
-      const topPosition = element.offsetTop - mainAreaRef.current.offsetTop;
-      console.log(id, topPosition);
-      mainAreaRef.current.scrollTo({ top: topPosition, behavior: "smooth" });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -82,7 +75,7 @@ export default function SearchReportsPage() {
       <div className="flex flex-col gap-2">
         <aside className="fixed bottom-0 left-0 top-16 w-64 overflow-y-auto bg-muted p-4">
           <DateForm setContent={setContent} />
-          <Separator />
+          <Separator className="mb-4" />
           {!!content.length && (
             <div className="col-span-1">
               <DocNav

@@ -14,7 +14,7 @@ const ContentArea = ({ content }: ContentAreaProps) => {
         content.map((content, index) => (
           <div
             key={index}
-            id={content.date.toDateString().replaceAll(/\s/g, "")}
+            id={content.date.toDateString().replaceAll(/\s/g, "") + index}
           >
             <div className="my-4">
               <h3 className="mb-2 text-lg font-bold">

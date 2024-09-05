@@ -42,6 +42,8 @@ const SearchForm = ({ isContent, setSearchArray }: SearchFormProps) => {
       setInputValue("");
     } else if (e.key === "Backspace" && !inputValue && pills.length > 0) {
       removePill(pills.length - 1);
+    } else if (e.key === "Enter") {
+      handleClick();
     }
   };
 
