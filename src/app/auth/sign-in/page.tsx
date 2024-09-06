@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import { signInAction } from "~/actions/signIn";
 import { LoginFormSchema } from "~/app/validationSchemas";
 import { Button } from "~/components/ui/button";

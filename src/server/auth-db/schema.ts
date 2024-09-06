@@ -1,4 +1,4 @@
-import { boolean, text, unique } from "drizzle-orm/pg-core";
+import { text, unique } from "drizzle-orm/pg-core";
 
 import { pgTableCreator, timestamp } from "drizzle-orm/pg-core";
 

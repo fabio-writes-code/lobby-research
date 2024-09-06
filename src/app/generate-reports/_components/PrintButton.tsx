@@ -6,14 +6,23 @@ import MarkdownIt from "markdown-it";
 import React, { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { useReports } from "../_context/ReportsContext";
+// import { type Html2PdfType } from "~/types/html2pdf.js";
+// import { html  } from "~/types/html2pdf.js";
+
+type Html2PdfType = () => {
+  from: (element: HTMLElement) => {
+    set: (options: Record<string, unknown>) => { save: () => Promise<void> };
+  };
+};
 
 const PrintButton = () => {
   const { printContent } = useReports();
-  const [html2pdf, setHtml2pdf] = useState<unknown>(null);
+  const [html2pdf, setHtml2pdf] = useState<Html2PdfType | null>(null);
 
   useEffect(() => {
     // Dynamically import html2pdf only on the client side
     void import("html2pdf.js").then((module) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       setHtml2pdf(() => module.default);
     });
   }, []);
