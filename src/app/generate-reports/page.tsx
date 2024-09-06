@@ -73,7 +73,7 @@ export default function SearchReportsPage() {
   return (
     <div className="h-100 relative mt-4">
       <div className="flex flex-col gap-2">
-        <aside className="fixed bottom-0 left-0 top-16 w-64 overflow-y-auto bg-muted p-4">
+        <aside className="fixed bottom-0 left-0 top-16 w-64 overflow-y-auto border-r p-4">
           <DateForm setContent={setContent} />
           <Separator className="mb-4" />
           {!!content.length && (
