@@ -4,21 +4,20 @@ import ReactMarkdown from "react-markdown";
 import { ScrollArea } from "~/components/ui/scroll-area";
 
 interface TextAreaProps {
-  id: string;
   content: string[];
 }
 
-const TextArea = ({ id, content }: TextAreaProps) => {
+const TextArea = ({ content }: TextAreaProps) => {
   return (
-    <div id={id} className="mt-3 rounded-md border shadow-sm">
+    <div className="rounded-md border shadow-sm">
       <ScrollArea className="h-96 p-4">
         <ReactMarkdown
           components={{
             h1: ({ ...props }) => (
-              <h1 className="my-4 text-3xl font-bold" {...props} />
+              <p className="my-4 text-xl font-bold" {...props} />
             ),
             h2: ({ ...props }) => (
-              <h2 className="my-3 text-2xl font-semibold" {...props} />
+              <p className="my-3 text-lg font-semibold" {...props} />
             ),
             p: ({ ...props }) => (
               <p className="my-2 text-base text-gray-700" {...props} />

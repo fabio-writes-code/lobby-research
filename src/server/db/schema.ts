@@ -42,4 +42,5 @@ export const hansardDocument = createTable("hansard_document", {
     .notNull(),
   content: text("content"),
   hansard_date: date("hansard_date", { mode: "date" }).notNull(),
+  hansard_id: text("hansard_id").notNull(),
 });

@@ -1,20 +1,31 @@
+import { eq } from "drizzle-orm";
+import { cache } from "react";
+import { db } from "~/server/db";
+import { hansardDocument } from "~/server/db/schema";
 import ContentArea from "./ContentArea";
-import initContent from "./content";
 
-export default async function documentList() {
-  const tempText = initContent;
+interface Props {
+  params: {
+    id: string;
+  };
+}
 
-  const content = tempText.split("\n\n");
+const fetchDocument = cache(
+  async (id: string) =>
+    await db
+      .select()
+      .from(hansardDocument)
+      .where(eq(hansardDocument.hansard_id, id)),
+);
 
-  // const parsedContent = await remark().use(html).process(tempText);
+export default async function documentList({ params }: Props) {
+  const hansardDocument = await fetchDocument(params.id);
+
+  const content = hansardDocument[0]?.content?.split("\n\n");
+
   return (
-    <>
-      <ContentArea content={content} />
-      {/* <div
-        className=""
-        dangerouslySetInnerHTML={{ __html: parsedContent.toString() }}
-      ></div> */}
-      {/* <ReactMarkdown>{tempText}</ReactMarkdown> */}
-    </>
+    <div className="ml-64">
+      <ContentArea content={content!} />
+    </div>
   );
 }
