@@ -1,6 +1,6 @@
 "use server";
 
-import { LoginFormSchema } from "~/app/validationSchemas";
+import { LoginFormSchema } from "~/lib/validations/auth-schemas";
 import { signIn } from "~/auth";
 import { AuthError } from "next-auth";
 import type * as z from "zod";
@@ -24,7 +24,8 @@ export const signInAction = async (values: z.infer<typeof LoginFormSchema>) => {
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CallbackRouteError" || "CredentialsSignin":
+        case "CallbackRouteError":
+        case "CredentialsSignin":
           return { error: "Invalid credentials" };
         default:
           return { error: "An error occurred" };

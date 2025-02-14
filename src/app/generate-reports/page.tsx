@@ -10,8 +10,10 @@ import ReportButton from "./_components/ReportButton";
 import SearchForm from "./_components/SearchForm";
 import { useReports } from "./_context/ReportsContext";
 import { Separator } from "~/components/ui/separator";
+import { useToast } from "~/hooks/use-toast";
 
 export default function SearchReportsPage() {
+  const { toast } = useToast();
   const [content, setContent] = useState<
     { date: Date; content: string | null }[]
   >([]);
@@ -20,6 +22,15 @@ export default function SearchReportsPage() {
     useState<{ date: Date; content: string | null }[]>(content);
 
   const handleSearchArrayChange = (pills: string[]) => {
+    if (pills.length === 0) {
+      toast({
+        description: "Please enter at least one keyword to search.",
+        variant: "destructive",
+      });
+      console.log('Here')
+      return;
+    }
+
     function filterContent(text: string, pills: string[]) {
       if (pills.length === 0) return text;
 
@@ -45,6 +56,22 @@ export default function SearchReportsPage() {
     }));
 
     setFilteredContent(filteredContent);
+
+    // Count documents with matches
+    const matchCount = filteredContent.filter(item => 
+      item.content?.includes('`')
+    ).length;
+
+    if (matchCount === 0) {
+      toast({
+        description: "No matches found for your search terms.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        description: `Found matches in ${matchCount} document${matchCount > 1 ? 's' : ''} for: ${pills.join(', ')}`,
+      });
+    }
   };
 
   const { printContent, createActive } = useReports();
@@ -61,12 +88,18 @@ export default function SearchReportsPage() {
         area.date.toDateString().replaceAll(/\s/g, "") + index,
       ) as HTMLDivElement;
     });
+  
   }, [content]);
 
   const scrollToArea = (id: string) => {
     const element = textAreaRefs.current[id];
     if (element && mainAreaRef.current) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      toast({
+        description: "Unable to scroll to the selected document.",
+        variant: "destructive",
+      });
     }
   };
 

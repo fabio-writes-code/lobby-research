@@ -23,6 +23,7 @@ import {
 import { cn } from "~/lib/utils";
 import { useTransition } from "react";
 import { getDocuments } from "~/actions/getDocuments";
+import { useToast } from "~/hooks/use-toast";
 
 const FormSchema = z
   .object({
@@ -47,6 +48,7 @@ interface DateFormProps {
 
 export default function DateForm({ setContent }: DateFormProps) {
   const [isPending, startTransition] = useTransition();
+  const {toast} = useToast()
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -63,7 +65,12 @@ export default function DateForm({ setContent }: DateFormProps) {
       })
         .then((content) => {
           if (!content) console.log("No new content");
-          else setContent(content);
+          else { setContent(content);
+      if (content.length > 0) {
+        toast({
+          description: `Successfully loaded ${content.length} document${content.length > 1 ? 's' : ''}.`,
+        });
+      }}
         })
         .catch((e) => console.log(e));
     });

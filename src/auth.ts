@@ -1,19 +1,27 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
+import { db } from "./server/db";
+import { users } from "./server/db/schema";
+import { LoginFormSchema } from "./lib/validations/auth-schemas";
 import bcrypt from "bcryptjs";
-import { auth_db } from "./server/auth-db";
-import { LoginFormSchema } from "./app/validationSchemas";
-import { users } from "./server/auth-db/schema";
 
-type ExtendedUser = DefaultSession["user"] & { role: string };
+type ExtendedUser = DefaultSession["user"] & {
+  role: string;
+};
 
 declare module "next-auth" {
   interface User {
+    id?: string;
     role: string;
+    name?: string | null;
+    email?: string | null;
   }
   interface Session {
-    user: ExtendedUser;
+    user: ExtendedUser & {
+      id: string;
+      email: string;
+    }
   }
 }
 
@@ -24,26 +32,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
+      async authorize(credentials) {
         const validatedFields = LoginFormSchema.safeParse(credentials);
 
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
 
-          const user = await auth_db
-            .select()
-            .from(users)
-            .where(eq(users.email.getSQL(), email))
-            .execute()
-            .then((user) => user[0]);
+          try {
+            const [user] = await db
+              .select()
+              .from(users)
+              .where(eq(users.email, email));
 
-          if (!user?.password) {
-            throw new Error("User nof found");
+            if (!user?.password) {
+              throw new Error("User not found");
+            }
+
+            const passwordMatch = await bcrypt.compare(password, user.password);
+            if (passwordMatch) {
+              // Return only the necessary user data
+              return {
+                id: user.id.toString(),
+                name: user.name,
+                email: user.email,
+                role: user.role,
+              };
+            }
+          } catch (error) {
+            console.error("Database error:", error);
+            throw new Error("Authentication failed");
           }
-
-          const passwordMatch = await bcrypt.compare(password, user.password);
-
-          if (passwordMatch) return user;
         }
 
         return null;

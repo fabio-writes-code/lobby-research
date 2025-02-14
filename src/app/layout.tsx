@@ -7,6 +7,7 @@ import { cn } from "~/lib/utils";
 import "../styles/globals.css";
 import Navbar from "./NavBar";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "~/components/ui/toaster";
 export const metadata: Metadata = {
   title: "Hansard Document Search",
   description: "Hansard Document Search",
@@ -36,6 +37,7 @@ export default function RootLayout({
         <SessionProvider>
           <Navbar />
           {children}
+          <Toaster/>
         </SessionProvider>
       </body>
     </html>

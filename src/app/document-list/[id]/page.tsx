@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 import { db } from "~/server/db";
-import { hansardDocument } from "~/server/db/schema";
+import { hansardDocuments } from "~/server/db/schema";
 import ContentArea from "./ContentArea";
 
 interface Props {
@@ -14,14 +14,14 @@ const fetchDocument = cache(
   async (id: string) =>
     await db
       .select()
-      .from(hansardDocument)
-      .where(eq(hansardDocument.hansard_id, id)),
+      .from(hansardDocuments)
+      .where(eq(hansardDocuments.hansardId, id)),
 );
 
 export default async function documentList({ params }: Props) {
-  const hansardDocument = await fetchDocument(params.id);
+  const hansardDocuments = await fetchDocument(params.id);
 
-  const content = hansardDocument[0]?.content?.split("\n\n");
+  const content = hansardDocuments[0]?.content?.split("\n\n");
 
   return (
     <div className="ml-64">

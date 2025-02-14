@@ -1,15 +1,13 @@
 import { eq } from "drizzle-orm";
-import { auth_db } from "~/server/auth-db";
-import { users } from "~/server/auth-db/schema";
+import { db} from "~/server/db";
+import { users } from "~/server/db/schema";
 
 export const getUserByEmail = async (email: string) => {
   try {
-    const user = await auth_db
+    const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.email.getSQL(), email))
-      .execute()
-      .then((user) => user[0]);
+      .where(eq(users.email, email));
 
     return user;
   } catch (e) {

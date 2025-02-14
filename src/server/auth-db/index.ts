@@ -1,7 +1,16 @@
-import { drizzle } from "drizzle-orm/vercel-postgres";
-import { sql } from "@vercel/postgres";
-
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "./schema";
 
-// Use this object to send drizzle queries to your DB
-export const auth_db = drizzle(sql, { schema });
+import { env } from "~/env";
+
+if (!env.TURSO_DATABASE_URL) {
+  throw new Error("DATABASE_URL is not set");
+}
+
+const client = createClient({
+  url: env.TURSO_DATABASE_URL,
+  authToken: env.TURSO_AUTH_TOKEN,
+});
+
+export const db = drizzle(client, { schema });

@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "~/server/db";
-import { hansardDocument } from "~/server/db/schema";
+import { hansardDocuments } from "~/server/db/schema";
 import SidePanel from "./SidePanel";
 
 interface Props {
@@ -10,10 +10,10 @@ interface Props {
 export default async function documentListLayout({ children }: Props) {
   const hansardIds = await db
     .select({
-      id: hansardDocument.hansard_id,
-      date: hansardDocument.hansard_date,
+      id: hansardDocuments.hansardId,
+      date: hansardDocuments.hansardDate,
     })
-    .from(hansardDocument);
+    .from(hansardDocuments);
 
   return (
     <div className="mt-16 flex w-full">

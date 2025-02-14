@@ -1,48 +1,43 @@
-import { text, unique } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { 
+  text, 
+  integer, 
+  sqliteTable,
+  uniqueIndex 
+} from "drizzle-orm/sqlite-core";
 
-import { pgTableCreator, timestamp } from "drizzle-orm/pg-core";
-
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
-export const createTable = pgTableCreator((name) => `cms-app_${name}`);
-
-export const users = createTable("user", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: text("name"),
-  password: text("password"),
+// Users table (merged with clients)
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
   email: text("email").notNull(),
-  role: text("role").notNull().default("user"),
-  createdAt: timestamp("createdAt", { mode: "date" }),
-});
+  password: text("password"),
+  role: text("role", { enum: ["admin", "user", "client"] }).notNull().default("user"),
+  keywords: text("keywords"), // For client-specific keywords, stored as JSON
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
+}, (table) => ({
+  emailIdx: uniqueIndex('email_idx').on(table.email),
+}));
 
-export const InviteToken = createTable(
-  "invite_token",
-  {
-    id: text("id").primaryKey().default(crypto.randomUUID()),
-    email: text("email").notNull(),
-    token: text("token").notNull().unique(),
-    role: text("role").notNull().default("user"),
-    usedAt: timestamp("used_at", { mode: "date" }),
-    expiresAt: timestamp("expires_at", { mode: "date" }),
-  },
-  (t) => ({ unq: unique().on(t.email, t.token) }),
-);
+// Invite tokens table
+export const inviteTokens = sqliteTable("invite_tokens", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  email: text("email").notNull(),
+  token: text("token").notNull(),
+  role: text("role", { enum: ["admin", "user", "client"] }).notNull().default("user"),
+  usedAt: integer("used_at", { mode: "timestamp" }),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+}, (table) => ({
+  emailTokenIdx: uniqueIndex('email_token_idx').on(table.email, table.token),
+}));
 
-export const PasswordResetToken = createTable(
-  "password_reset_token",
-  {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    email: text("email").notNull(),
-    token: text("token").notNull().unique(),
-    expiresAt: timestamp("expires_at", { mode: "date" }),
-  },
-  (t) => ({ unq: unique().on(t.email, t.token) }),
-);
+// Password reset tokens table
+export const passwordResetTokens = sqliteTable("password_reset_tokens", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  email: text("email").notNull(),
+  token: text("token").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+}, (table) => ({
+  emailTokenIdx: uniqueIndex('email_token_idx').on(table.email, table.token),
+}));
+

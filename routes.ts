@@ -18,9 +18,9 @@ export const authRoutes: string[] = [
   "/api/users/userRegister",
   "/error",
   "/auth/reset",
-  "/api/users/reset-password-token",
+  "/auth/request-password-reset",
   "/api/send_password_reset",
-  "/auth/passwordReset",
+  "/auth/password-reset",
   "/api/users/password-reset",
 ];
 
