@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CalendarDays, ArrowLeft } from "lucide-react";
+import { Button } from "~/components/ui/button";
 import ContentArea from "./_components/ContentArea";
 import CreateArea from "./_components/CreateArea";
 import DateForm from "./_components/DateForm";
@@ -10,16 +12,27 @@ import ReportButton from "./_components/ReportButton";
 import SearchForm from "./_components/SearchForm";
 import { useReports } from "./_context/ReportsContext";
 import { Separator } from "~/components/ui/separator";
+import { useToast } from "~/hooks/use-toast";
 
 export default function SearchReportsPage() {
+  const { toast } = useToast();
   const [content, setContent] = useState<
     { date: Date; content: string | null }[]
   >([]);
 
   const [filteredContent, setFilteredContent] =
     useState<{ date: Date; content: string | null }[]>(content);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleSearchArrayChange = (pills: string[]) => {
+    if (pills.length === 0) {
+      toast({
+        description: "Please enter at least one keyword to search.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     function filterContent(text: string, pills: string[]) {
       if (pills.length === 0) return text;
 
@@ -45,6 +58,22 @@ export default function SearchReportsPage() {
     }));
 
     setFilteredContent(filteredContent);
+
+    // Count documents with matches
+    const matchCount = filteredContent.filter(item => 
+      item.content?.includes('`')
+    ).length;
+
+    if (matchCount === 0) {
+      toast({
+        description: "No matches found for your search terms.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        description: `Found matches in ${matchCount} document${matchCount > 1 ? 's' : ''} for: ${pills.join(', ')}`,
+      });
+    }
   };
 
   const { printContent, createActive } = useReports();
@@ -61,19 +90,42 @@ export default function SearchReportsPage() {
         area.date.toDateString().replaceAll(/\s/g, "") + index,
       ) as HTMLDivElement;
     });
+  
   }, [content]);
 
   const scrollToArea = (id: string) => {
     const element = textAreaRefs.current[id];
     if (element && mainAreaRef.current) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      toast({
+        description: "Unable to scroll to the selected document.",
+        variant: "destructive",
+      });
     }
   };
 
   return (
     <div className="h-100 relative mt-4">
+      <Button
+        variant="outline"
+        size="icon"
+        className="fixed bottom-4 left-4 z-50 rounded-full shadow-md hover:shadow-lg lg:hidden"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      >
+
+        {isSidebarOpen ? (
+          <ArrowLeft className="h-5 w-5" />
+        ) : (
+          <CalendarDays className="h-5 w-5" />
+        )}
+      </Button>
       <div className="flex flex-col gap-2">
-        <aside className="fixed bottom-0 left-0 top-16 w-64 overflow-y-auto border-r p-4">
+        <aside
+          className={`fixed bottom-0 left-0 top-[73px] lg:top-[69px] z-40 w-64 overflow-y-auto border-r  bg-background p-4 transition-transform duration-300 lg:translate-x-0 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
           <DateForm setContent={setContent} />
           <Separator className="mb-4" />
           {!!content.length && (
@@ -88,7 +140,7 @@ export default function SearchReportsPage() {
       </div>
 
       {/* main area */}
-      <div className="ml-64 px-6">
+      <div className={`transition-all duration-300 px-4 lg:px-6 ${isSidebarOpen ? "lg:ml-64" : "ml-0"}`}>
         {/* search bar */}
         <SearchForm
           isContent={!!content.length}
@@ -109,9 +161,17 @@ export default function SearchReportsPage() {
       </div>
 
       {/* Absolutely Positioned Buttons */}
-      {!!content.length && !createActive && <ReportButton />}
+      {!!content.length && !createActive && (
+        <div className="hidden lg:block">
+          <ReportButton />
+        </div>
+      )}
 
-      {!!printContent.length && <PrintButton />}
+      {!!printContent.length && (
+        <div className="hidden lg:block">
+          <PrintButton />
+        </div>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { between } from "drizzle-orm";
 import { db } from "~/server/db";
-import { hansardDocument } from "~/server/db/schema";
+import { hansardDocuments } from "~/server/db/schema";
 
 interface GetDocumentsParams {
   startDate: Date;
@@ -16,11 +16,11 @@ export const getDocuments = async ({
   try {
     const document = await db
       .select({
-        date: hansardDocument.hansard_date,
-        content: hansardDocument.content,
+        date: hansardDocuments.hansardDate,
+        content: hansardDocuments.content,
       })
-      .from(hansardDocument)
-      .where(between(hansardDocument.hansard_date, startDate, endDate));
+      .from(hansardDocuments)
+      .where(between(hansardDocuments.hansardDate, startDate, endDate));
     const contentArray = document;
     return contentArray;
   } catch (e) {

@@ -1,12 +1,15 @@
-import { type Config } from "drizzle-kit";
 
-console.log("POSTGRES_URL", process.env.POSTGRES_URL);
+import type { Config } from "drizzle-kit";
 
-export default {
+import { env } from "~/env";
+
+export default { 
   schema: "./src/server/auth-db/schema.ts",
-  dialect: "postgresql",
+  out: "./server/db/migrations",
+  dialect: "turso",
   dbCredentials: {
-    url: process.env.POSTGRES_URL as string,
+    url: env.TURSO_DATABASE_URL,
+    authToken:env.TURSO_AUTH_TOKEN,
   },
-  tablesFilter: ["cms-app_*"],
 } satisfies Config;
+

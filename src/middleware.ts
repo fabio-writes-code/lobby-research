@@ -22,7 +22,7 @@ export default auth((req) => {
   if (isAuthRoute && isLoggedIn)
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
 
-  if (req.nextUrl.pathname.startsWith("/api/admin/users/") && !isLoggedIn)
+  if (req.nextUrl.pathname.startsWith("/api/admin/") && !isLoggedIn)
     return undefined;
 
   if (!isLoggedIn && !isPublicRoute)

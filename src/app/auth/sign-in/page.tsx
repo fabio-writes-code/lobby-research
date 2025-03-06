@@ -5,8 +5,9 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
 import { signInAction } from "~/actions/signIn";
-import { LoginFormSchema } from "~/app/validationSchemas";
+import { LoginFormSchema } from "~/lib/validations/auth-schemas";
 import { Button } from "~/components/ui/button";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -47,7 +48,7 @@ export default function SignInPage() {
   });
 
   return (
-    <div className="flex h-5/6 items-center justify-center bg-background">
+    <div className="flex h-full items-center justify-center bg-background">
       {error && <div>{error}</div>}
       <Card className="w-[36rem]">
         <CardHeader>
@@ -89,6 +90,11 @@ export default function SignInPage() {
               <Button type="submit" className="w-full" disabled={isPending}>
                 {isPending ? "Logging in..." : "Login"}
               </Button>
+                <div className="mt-4 text-center">
+                  <Link href="/auth/request-password-reset" className="text-sm text-blue-600 hover:underline">
+                    Forgot your password?
+                  </Link>
+                </div>
             </form>
           </Form>
         </CardContent>

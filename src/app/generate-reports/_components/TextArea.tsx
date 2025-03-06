@@ -20,7 +20,7 @@ const TextArea = ({ content }: TextAreaProps) => {
               <p className="my-3 text-lg font-semibold" {...props} />
             ),
             p: ({ ...props }) => (
-              <p className="my-2 text-base text-gray-700" {...props} />
+              <p className="my-2 text-base text-gray-700 dark:text-muted-foreground" {...props} />
             ),
             li: ({ ...props }) => <li className="ml-4 list-disc" {...props} />,
             a: ({ ...props }) => (

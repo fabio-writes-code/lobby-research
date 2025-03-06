@@ -1,33 +1,16 @@
-// import { drizzle } from "drizzle-orm/postgres-js";
-// import postgres from "postgres";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
+import * as schema from "./schema";
 
 import { env } from "~/env";
-// import * as schema from "./schema";
 
-// /**
-//  * Cache the database connection in development. This avoids creating a new connection on every HMR
-//  * update.
-//  */
-// const globalForDb = globalThis as unknown as {
-//   conn: postgres.Sql | undefined;
-// };
+if (!env.TURSO_DATABASE_URL) {
+  throw new Error("DATABASE_URL is not set");
+}
 
-// console.log("Connected to database", env.DATABASE_URL);
-
-// const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
-// if (env.NODE_ENV !== "production") globalForDb.conn = conn;
-
-// export const db = drizzle(conn, { schema });
-
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-
-const connectionString = env.DATABASE_URL;
-
-// Disable prefetch as it is not supported for "Transaction" pool mode
-
-export const client = postgres(connectionString, {
-  ssl: { rejectUnauthorized: false },
-  prepare: false,
+const client = createClient({
+  url: env.TURSO_DATABASE_URL,
+  authToken: env.TURSO_AUTH_TOKEN,
 });
-export const db = drizzle(client);
+
+export const db = drizzle(client, { schema });
