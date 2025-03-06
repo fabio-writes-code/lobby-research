@@ -39,7 +39,6 @@ export default function SignInPage() {
 
   const onSubmit = form.handleSubmit(async (data) => {
     setError("");
-    console.log(data);
     startTransition(() => {
       signInAction(data)
         .then((response) => setError(response?.error))

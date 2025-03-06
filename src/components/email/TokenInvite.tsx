@@ -8,7 +8,6 @@ interface EmailInviteTokenProps {
 }
 
 const EmailInviteToken = ({ token, pathRoot }: EmailInviteTokenProps) => {
-  console.log('pathRoot on email', pathRoot);
   return (
     <Html>
       <Head />
