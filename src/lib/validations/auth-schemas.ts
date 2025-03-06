@@ -17,3 +17,24 @@ export const inviteSchema = z.object({
 });
 
 export type InviteSchemaFormValues= z.infer<typeof inviteSchema>
+
+
+export const registerFormSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" })
+      .max(255, { message: "Name is too long" }),
+    email: z.string().email(),
+    password: z
+      .string()
+      .min(8, { message: "Password is too short" })
+      .max(20, { message: "Password is too long" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type RegisterFormSchema = z.infer<typeof registerFormSchema>

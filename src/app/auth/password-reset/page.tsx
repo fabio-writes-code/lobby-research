@@ -3,7 +3,6 @@ import { PasswordResetForm } from "./PasswordResetForm";
 import { getPasswordResetTokenByToken } from "~/app/data/passwordResetToken";
 import { Button } from "~/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "~/components/ui/card";
-import { passwordResetTokens } from "~/server/auth-db/schema";
 
 interface RegistrationPageProps {
   searchParams: {

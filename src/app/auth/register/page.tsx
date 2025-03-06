@@ -1,6 +1,6 @@
-import { getVerificationTokenByToken } from "@/app/data/verificationToken";
-import { notFound, useSearchParams } from "next/navigation";
-import RegistrationForm from "./RegistrationForm";
+import { notFound} from "next/navigation";
+import { RegisterAccountForm } from "./RegistrationForm";
+import { getInviteTokenByToken } from "~/app/data/inviteToken";
 
 interface RegistrationPageProps {
   searchParams: {
@@ -9,21 +9,21 @@ interface RegistrationPageProps {
 }
 
 const RegistrationPage = async ({ searchParams }: RegistrationPageProps) => {
-  const verificationToken = await getVerificationTokenByToken(searchParams.token);
+  const inviteToken = await getInviteTokenByToken(searchParams.token);
 
-  if (!verificationToken) {
+  if (!inviteToken) {
     notFound();
   }
 
-  if (verificationToken.expiresAt! < new Date()) {
+  if (inviteToken.expiresAt < new Date()) {
     return <div>Invitation has expired. Please request a new Invite Token</div>;
   }
 
-  if (verificationToken.usedAt) {
+  if (inviteToken.usedAt) {
     return <div>Invalid Token</div>;
   }
 
-  return <RegistrationForm token={verificationToken} />;
+  return <RegisterAccountForm token={inviteToken} />;
 };
 
 export default RegistrationPage;

@@ -16,9 +16,9 @@ export default async function documentListLayout({ children }: Props) {
     .from(hansardDocuments);
 
   return (
-    <div className="mt-16 flex w-full">
+    <div className="mt-16 flex">
       <SidePanel hansardIds={hansardIds} />
-      <div className="mt-6 flex flex-1 flex-col">{children}</div>
+      <div className="mt-6 flex flex-1 flex-col w-[-webkit-fill-available;]">{children}</div>
     </div>
   );
 }

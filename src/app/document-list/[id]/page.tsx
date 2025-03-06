@@ -24,7 +24,7 @@ export default async function documentList({ params }: Props) {
   const content = hansardDocuments[0]?.content?.split("\n\n");
 
   return (
-    <div className="ml-64">
+    <div className="lg:ml-64 ml-0 relative">
       <ContentArea content={content!} />
     </div>
   );

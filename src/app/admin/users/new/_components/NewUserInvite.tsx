@@ -28,6 +28,13 @@ import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 
 import { createInviteToken } from "~/actions/auth/new-invite-token";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem,
+  SelectTrigger, 
+  SelectValue 
+} from "~/components/ui/select";
 
 export function NewUserInvite() {
   const router = useRouter();
@@ -53,6 +60,7 @@ export function NewUserInvite() {
         return;
       }
 
+      // TODO: create page to manage users
       router.push("/admin/users");
       router.refresh();
     } catch (error) {
@@ -88,17 +96,18 @@ export function NewUserInvite() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Role</FormLabel>
-                  <FormControl>
-                    <select 
-                      {...field} 
-                      disabled={pending}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="STAFF">Staff</option>
-                      <option value="CLIENT">Client</option>
-                      <option value="ADMIN">Admin</option>
-                    </select>
-                  </FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role New User"/>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="STAFF">Staff</SelectItem>
+                      <SelectItem value="CLIENT">Client</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "~/server/db";
-import { users } from "~/server/db/schema";
+import { passwordResetTokens, users } from "~/server/db/schema";
 import type { PasswordResetTokenRequest } from "~/lib/validations/password-reset";
 import { passwordResetTokenRequest } from "~/lib/validations/password-reset";
 import { generatePasswordResetToken } from "~/lib/password-reset-token";
@@ -38,7 +38,8 @@ export async function requestPasswordResetToken(values: PasswordResetTokenReques
     try {
       await sendPasswordResetEmail({email:existingUser.email, token:tokenData.token})
     } catch (emailError) {
-      console.error("Failed to send reset email: ", emailError)
+      await db.delete(passwordResetTokens).where(eq(passwordResetTokens.token,tokenData.token))
+      console.error("Failed to send reset email, password reset token deleted from DB ", emailError)
       throw new Error("Failed to send request email")
     }
 

@@ -1,3 +1,5 @@
+"use server"
+
 import { getPasswordResetTokenByEmail } from "~/app/data/passwordResetToken";
 import { db } from "~/server/db";
 import { passwordResetTokens } from "~/server/db/schema";

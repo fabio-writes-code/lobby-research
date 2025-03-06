@@ -67,10 +67,10 @@ const SearchForm = ({ isContent, setSearchArray }: SearchFormProps) => {
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="flex w-full gap-4">
+      <div className="flex w-full gap-4 flex-wrap lg:flex-nowrap">
         <div
         ref={containerRef}
-        className="flex flex-auto flex-wrap items-center gap-2 overflow-x-auto rounded-md border border-input bg-background p-2"
+        className="flex flex-auto flex-wrap items-center gap-2 w-full overflow-x-auto rounded-md border border-input bg-background p-2"
         onClick={focusInput}
       >
         {pills.map((pill, index) => (
@@ -105,7 +105,7 @@ const SearchForm = ({ isContent, setSearchArray }: SearchFormProps) => {
         />
       </div>
       <Button
-        className="w-full sm:w-fit"
+        className="w-full lg:w-fit"
         type="submit"
         disabled={!isContent }
         onClick={handleClick}

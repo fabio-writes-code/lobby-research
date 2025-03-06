@@ -7,19 +7,18 @@ interface EmailInviteTokenProps {
   pathRoot: string;
 }
 
-const EmailPasswordReset = ({ token, pathRoot }: EmailInviteTokenProps) => {
+const EmailInviteToken = ({ token, pathRoot }: EmailInviteTokenProps) => {
+  console.log('pathRoot on email', pathRoot);
   return (
     <Html>
       <Head />
-      <Preview>{'Password Reset Request'}</Preview>
+      <Preview>{"You've been invited to join our platform"}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text>{`Password Reset`}</Text>
-          <Text>{`You have requested to reset your password. Please click the button below to proceed.`}</Text>
-          <Link style={btn} href={`${pathRoot}/auth/password-reset?token=${token}`}>
-            Reset Password
+          <Text>{`Welcome, you've been invited to join Alberta Counsel's Hansard Platform`}</Text>
+          <Link style={btn} href={`${pathRoot}/auth/register?token=${token}`}>
+            Activate your account
           </Link>
-          <Text>{`If you did not request a password reset, please disregard this email.`}</Text>
         </Container>
       </Body>
     </Html>
@@ -50,4 +49,4 @@ const btn = {
   marginTop: '10px',
 };
 
-export default EmailPasswordReset;
+export default EmailInviteToken;

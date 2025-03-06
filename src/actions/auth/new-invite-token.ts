@@ -4,6 +4,8 @@ import { db } from "~/server/db";
 import { inviteSchema} from "~/lib/validations/auth-schemas";
 import type { InviteSchemaFormValues } from "~/lib/validations/auth-schemas";
 import { inviteTokens } from "~/server/db/schema";
+import { sendInviteToken } from "../email/token-invite";
+import { eq } from "drizzle-orm/sql";
 
 interface InviteTokenResponse{
   success: boolean,
@@ -48,8 +50,13 @@ export async function createInviteToken(formData: InviteSchemaFormValues): Promi
       expiresAt,
     });
 
-    // Here you would typically send an email with the invite link
-    // containing the token
+    try {
+      await sendInviteToken({email:email, token:token})
+    } catch (emailError) {
+      await db.delete(inviteTokens).where(eq(inviteTokens.token, token))
+      console.error("Failed to send invite email, token removed from DB ", emailError)
+      throw new Error("Failed to send invite email")
+    }
 
     return {
       success: true
