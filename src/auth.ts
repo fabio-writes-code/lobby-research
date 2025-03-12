@@ -39,13 +39,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const { email, password } = validatedFields.data;
 
           try {
+            // Add a small delay to prevent timing attacks
+            await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 100));
             const [user] = await db
               .select()
               .from(users)
               .where(eq(users.email, email));
 
             if (!user?.password) {
-              throw new Error("User not found");
+              console.warn(`Login attempt for non-existent user: ${email}`);
+              return null;
             }
 
             const passwordMatch = await bcrypt.compare(password, user.password);
@@ -60,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
           } catch (error) {
             console.error("Database error:", error);
-            throw new Error("Authentication failed");
+            return null
           }
         }
 
@@ -86,5 +89,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60 //24 hours
   },
+  cookies:{
+    sessionToken:{
+      name: `authjs.session-token`,
+      options:{
+        httpOnly:true,
+        sameSite: 'lax',
+        path:'/',
+        secure: process.env.NODE_ENV === "production",
+      }
+    }
+  }
 });

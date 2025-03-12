@@ -41,14 +41,20 @@ export default function SignInPage() {
     setError("");
     startTransition(() => {
       signInAction(data)
-        .then((response) => setError(response?.error))
-        .catch(console.error);
+        .then((response) => {
+          if (response?.error) {
+            setError("Invalid email or password");
+          }
+        })
+        .catch(() => {
+          setError("An error occurred during sign in");
+        });
     });
   });
 
   return (
     <div className="flex h-full items-center justify-center bg-background">
-      {error && <div>{error}</div>}
+      {error && <div className="mb-4 p-3 text-sm text-red-500 bg-red-50 rounded-md">{error}</div>}
       <Card className="w-[36rem]">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>

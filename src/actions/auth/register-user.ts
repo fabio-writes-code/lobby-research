@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { registerFormSchema } from "~/lib/validations/auth-schemas";
 import { getInviteTokenByToken } from "~/app/data/inviteToken";
+import { checkRegistrationRateLimit } from "~/lib/rate-limit-action";
 
 interface RegisterUserRequest{
   token: string,
@@ -23,7 +24,11 @@ interface RegisterUserResult{
 }
 
 export async function registerNewUser({token, data}:RegisterUserRequest):Promise<RegisterUserResult> {
-
+  // Check rate limit before processing
+  const rateLimitCheck = await checkRegistrationRateLimit();
+  if (!rateLimitCheck.success) {
+    return { success: false, error: rateLimitCheck.error };
+  }
 
   try {
     if (!token) throw new Error("Token not present")

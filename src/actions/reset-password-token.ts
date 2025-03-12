@@ -7,6 +7,7 @@ import { passwordResetTokenRequest } from "~/lib/validations/password-reset";
 import { generatePasswordResetToken } from "~/lib/password-reset-token";
 import { eq } from "drizzle-orm";
 import { sendPasswordResetEmail } from "./email/password-reset";
+import { checkPasswordResetRateLimit } from "~/lib/rate-limit-action";
 
 interface ResetTokenResponse{
   success: boolean,
@@ -14,6 +15,11 @@ interface ResetTokenResponse{
 }
 
 export async function requestPasswordResetToken(values: PasswordResetTokenRequest): Promise<ResetTokenResponse>{
+  // Check rate limit before processing
+  const rateLimitCheck = await checkPasswordResetRateLimit();
+  if (!rateLimitCheck.success) {
+    return { success: false, error: rateLimitCheck.error };
+  }
 
   try {
     const validatedUserRegistration = passwordResetTokenRequest.safeParse(values);
