@@ -6,6 +6,7 @@ import { passwordResetTokens, users } from "~/server/db/schema";
 import { passwordResetSchema } from "~/lib/validations/password-reset";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import * as Sentry from "@sentry/nextjs";
 
 interface ResetPasswordRequest{
   token: string,
@@ -56,7 +57,21 @@ export async function resetPassword({token, data}:ResetPasswordRequest):Promise<
 
     return {success: true}
   } catch (error) {
-    console.log(error);
-    return {success:false, error: error instanceof Error? error.message: "Something went wrong"}
+    Sentry.captureException(error, {
+      level: "error",
+      tags: {
+        action: "reset_password",
+        status: "failed",
+        token: token ? "provided" : "missing"
+      },
+      contexts: {
+        resetAttempt: {
+          email: data.email,
+          errorType: error instanceof Error ? error.message : "Unknown error"
+        }
+      }
+    });
+    console.error("Password reset error:", error);
+    return {success:false, error: error instanceof Error ? error.message : "Something went wrong"}
   }
 }

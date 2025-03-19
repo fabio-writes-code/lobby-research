@@ -1,6 +1,7 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
+import * as Sentry from "@sentry/nextjs";
 import { db } from "./server/db";
 import { users } from "./server/db/schema";
 import { LoginFormSchema } from "./lib/validations/auth-schemas";
@@ -39,13 +40,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const { email, password } = validatedFields.data;
 
           try {
+            // Add a small delay to prevent timing attacks
+            await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 100));
             const [user] = await db
               .select()
               .from(users)
               .where(eq(users.email, email));
 
             if (!user?.password) {
-              throw new Error("User not found");
+              Sentry.captureMessage(`Login attempt for non-existent user: ${email}`, {
+                level: "warning",
+                tags: {
+                  action: "login_attempt",
+                  status: "failed",
+                  reason: "user_not_found"
+                },
+                user: { email }
+              });
+              console.warn(`Login attempt for non-existent user: ${email}`);
+              return null;
             }
 
             const passwordMatch = await bcrypt.compare(password, user.password);
@@ -59,8 +72,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               };
             }
           } catch (error) {
+            Sentry.captureException(error, {
+              level: "error",
+              tags: {
+                action: "login_attempt",
+                status: "error",
+                component: "auth_credentials"
+              },
+              contexts: {
+                login: { email }
+              }
+            });
             console.error("Database error:", error);
-            throw new Error("Authentication failed");
+            return null
           }
         }
 
@@ -86,5 +110,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60 //24 hours
   },
+  cookies:{
+    sessionToken:{
+      name: `authjs.session-token`,
+      options:{
+        httpOnly:true,
+        sameSite: 'lax',
+        path:'/',
+        secure: process.env.NODE_ENV === "production",
+      }
+    }
+  }
 });

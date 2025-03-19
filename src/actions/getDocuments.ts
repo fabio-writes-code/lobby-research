@@ -1,6 +1,7 @@
 "use server";
 
 import { between } from "drizzle-orm";
+import * as Sentry from "@sentry/nextjs";
 import { db } from "~/server/db";
 import { hansardDocuments } from "~/server/db/schema";
 
@@ -24,7 +25,15 @@ export const getDocuments = async ({
     const contentArray = document;
     return contentArray;
   } catch (e) {
-    console.log(e);
+    Sentry.captureException(e, {
+      tags: {
+        action: "getDocuments",
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      },
+      level: "error"
+    });
+    console.error("Error fetching documents:", e);
     return [];
   }
 };

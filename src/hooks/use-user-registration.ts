@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { type PasswordResetToken } from '~/app/auth/password-reset/PasswordResetForm';
 import axios from 'axios';
 import { registerNewUser } from "~/actions/auth/register-user";
+import * as Sentry from "@sentry/nextjs";
 
 interface ErrorResponseData{
   error:string;
@@ -55,7 +56,25 @@ export function useRegisterForm(token:PasswordResetToken){
       router.refresh()
 
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error, {
+        level: "error",
+        tags: {
+          action: "user_registration",
+          status: "failed",
+          email: data.email
+        },
+        contexts: {
+          registrationAttempt: {
+            errorType: axios.isAxiosError(error) ? `HTTP ${error.response?.status ?? 'unknown'}` : "Client error",
+            errorMessage: axios.isAxiosError<ErrorResponseData>(error) && error.response?.data?.error ? error.response.data.error : "Unknown error"
+          }
+        }
+      });
+      
+      if (process.env.NODE_ENV !== "production") {
+        console.error("User registration error:", error);
+      }
+      
       setIsSubmitting(false);
       if (axios.isAxiosError<ErrorResponseData>(error) && error.response) {
         if (error.response?.status === 400) {

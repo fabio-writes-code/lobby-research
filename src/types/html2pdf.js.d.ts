@@ -18,15 +18,6 @@ declare module "html2pdf.js" {
 
   function html2pdf(): Html2Pdf;
 
-  export default html2pdf;
-
-  ``;
+  export default html2pdf;;
 }
 
-// export type Html2PdfType = {
-//   from: (element: HTMLElement) => {
-//     set: (options: object) => {
-//       save: () => Promise<void>;
-//     };
-//   };
-// };

@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { type PasswordResetToken } from '~/app/auth/password-reset/PasswordResetForm';
 import axios from 'axios';
 import { resetPassword } from "~/actions/reset-password";
+import * as Sentry from "@sentry/nextjs";
 
 interface ErrorResponseData{
   error:string;
@@ -52,7 +53,24 @@ export function usePasswordReset(token:PasswordResetToken){
       router.refresh()
 
     } catch (error) {
-      console.log(error);
+      Sentry.captureException(error, {
+        level: "error",
+        tags: {
+          action: "client_password_reset",
+          status: "failed",
+          email: data.email
+        },
+        contexts: {
+          resetAttempt: {
+            errorType: axios.isAxiosError(error) ? `HTTP ${error.response?.status ?? 'unknown'}` : "Client error"
+          }
+        }
+      });
+      
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Password reset client error:", error);
+      }
+      
       setIsSubmitting(false);
       if (axios.isAxiosError<ErrorResponseData>(error) && error.response) {
         if (error.response?.status === 400) {

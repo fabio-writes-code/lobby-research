@@ -7,7 +7,6 @@ import ContentArea from "./_components/ContentArea";
 import CreateArea from "./_components/CreateArea";
 import DateForm from "./_components/DateForm";
 import DocNav from "./_components/DocNav";
-import PrintButton from "./_components/PrintButton";
 import ReportButton from "./_components/ReportButton";
 import SearchForm from "./_components/SearchForm";
 import { useReports } from "./_context/ReportsContext";
@@ -76,7 +75,7 @@ export default function SearchReportsPage() {
     }
   };
 
-  const { printContent, createActive } = useReports();
+  const { createActive } = useReports();
 
   // Ref areas
   const mainAreaRef = useRef<HTMLDivElement>(null);
@@ -164,12 +163,6 @@ export default function SearchReportsPage() {
       {!!content.length && !createActive && (
         <div className="hidden lg:block">
           <ReportButton />
-        </div>
-      )}
-
-      {!!printContent.length && (
-        <div className="hidden lg:block">
-          <PrintButton />
         </div>
       )}
     </div>

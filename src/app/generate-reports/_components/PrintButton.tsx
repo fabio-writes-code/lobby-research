@@ -5,7 +5,6 @@ import { NotebookPen } from "lucide-react";
 import MarkdownIt from "markdown-it";
 import React, { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
-import { useReports } from "../_context/ReportsContext";
 // import { type Html2PdfType } from "~/types/html2pdf.js";
 // import { html  } from "~/types/html2pdf.js";
 
@@ -15,8 +14,7 @@ type Html2PdfType = () => {
   };
 };
 
-const PrintButton = () => {
-  const { printContent } = useReports();
+const PrintButton = ({printContent}:{printContent:string}) => {
   const [html2pdf, setHtml2pdf] = useState<Html2PdfType | null>(null);
 
   useEffect(() => {
