@@ -29,7 +29,7 @@ interface SecurityEvent {
   userId?: string;
   path?: string;
   timestamp: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string | number | boolean | null | undefined>;
 }
 
 export async function logSecurityEvent(event: Omit<SecurityEvent, 'ip' | 'path' | 'timestamp'>) {
