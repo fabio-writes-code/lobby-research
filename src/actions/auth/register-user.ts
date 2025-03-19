@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { registerFormSchema } from "~/lib/validations/auth-schemas";
 import { getInviteTokenByToken } from "~/app/data/inviteToken";
 import { checkRegistrationRateLimit } from "~/lib/rate-limit-action";
+import { logSecurityEvent } from "~/lib/security-logger";
 
 interface RegisterUserRequest{
   token: string,
@@ -58,6 +59,16 @@ export async function registerNewUser({token, data}:RegisterUserRequest):Promise
     return {success: true}
   } catch (error) {
     console.log(error);
+    await logSecurityEvent({
+      type: 'authentication_failure',
+      message: 'User registration failed',
+      metadata: {
+        email: data.email,
+        reason: error instanceof Error ? error.message : 'Unknown error',
+        token: token ? 'provided' : 'missing'
+      }
+    });
+    
     return {success:false, error: error instanceof Error? error.message: "Something went wrong"}
   }
 }

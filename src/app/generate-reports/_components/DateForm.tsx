@@ -24,6 +24,7 @@ import { cn } from "~/lib/utils";
 import { useTransition } from "react";
 import { getDocuments } from "~/actions/getDocuments";
 import { useToast } from "~/hooks/use-toast";
+import * as Sentry from "@sentry/nextjs";
 
 const FormSchema = z
   .object({
@@ -64,15 +65,43 @@ export default function DateForm({ setContent }: DateFormProps) {
         endDate: data.endDate,
       })
         .then((content) => {
-          if (!content) console.log("No new content");
+          if (!content) {
+            toast({
+              title: "No Content Found",
+              description: "No documents were found for the selected date range.",
+              variant: "destructive",
+            });
+          }
           else { setContent(content);
       if (content.length > 0) {
         toast({
-          description: `Successfully loaded ${content.length} document${content.length > 1 ? 's' : ''}.`,
+          description: `Successfully loaded ${content.length} document${content.length > 1 ? 's' :''}.`,
         });
       }}
         })
-        .catch((e) => console.log(e));
+        .catch((e) => {
+          toast({
+            title: "Error",
+            description: "Failed to retrieve documents. Please try again.",
+            variant: "destructive",
+          });
+          
+          // Log to Sentry
+          Sentry.captureException(e, {
+            tags: {
+              component: "DateForm",
+              action: "getDocuments"
+            },
+            extra: {
+              startDate: data.startDate,
+              endDate: data.endDate
+            }
+          });
+          
+          if (process.env.NODE_ENV === "development") {
+            console.error("Document retrieval error:", e);
+          }
+        });
     });
   });
 

@@ -1,6 +1,7 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
+import * as Sentry from "@sentry/nextjs";
 import { db } from "./server/db";
 import { users } from "./server/db/schema";
 import { LoginFormSchema } from "./lib/validations/auth-schemas";
@@ -47,6 +48,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               .where(eq(users.email, email));
 
             if (!user?.password) {
+              Sentry.captureMessage(`Login attempt for non-existent user: ${email}`, {
+                level: "warning",
+                tags: {
+                  action: "login_attempt",
+                  status: "failed",
+                  reason: "user_not_found"
+                },
+                user: { email }
+              });
               console.warn(`Login attempt for non-existent user: ${email}`);
               return null;
             }
@@ -62,6 +72,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               };
             }
           } catch (error) {
+            Sentry.captureException(error, {
+              level: "error",
+              tags: {
+                action: "login_attempt",
+                status: "error",
+                component: "auth_credentials"
+              },
+              contexts: {
+                login: { email }
+              }
+            });
             console.error("Database error:", error);
             return null
           }

@@ -53,8 +53,8 @@ export default function SignInPage() {
   });
 
   return (
-    <div className="flex h-full items-center justify-center bg-background">
-      {error && <div className="mb-4 p-3 text-sm text-red-500 bg-red-50 rounded-md">{error}</div>}
+    <div className="flex flex-col-reverse h-full items-center justify-center bg-background">
+      {error && <div className="mt-4 p-3 text-sm text-red-500 bg-red-50 rounded-md">{error}</div>}
       <Card className="w-[36rem]">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>

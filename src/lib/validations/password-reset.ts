@@ -1,12 +1,10 @@
 import * as z from 'zod';
+import { passwordStrengthSchema } from './password-strength';
 
 export const passwordResetSchema = z
   .object({
     email: z.string().email(),
-    password: z
-      .string()
-      .min(8, { message: "Password needs to be longer than 8 characters" })
-      .max(20, { message: "Password needs to be shorter than 20 characters" }),
+    password: passwordStrengthSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

@@ -1,3 +1,4 @@
+'use server'
 import { redis } from './redis';
 import type { NextRequest} from 'next/server';
 import { NextResponse } from 'next/server';
@@ -153,11 +154,24 @@ export async function rateLimitAction(
     // Get client IP from headers
     const headersList = headers();
     const forwardedFor = headersList.get('x-forwarded-for') ?? '';
-    const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'anonymous';
+    const ip = forwardedFor ? forwardedFor.split(',')[0]!.trim() : 'anonymous';
     
     const result = await rateLimitCore(ip, `action:${actionName}`, config);
     
     if (!result.success) {
+      // Import and use the security logger
+      const { logSecurityEvent } = await import('./security-logger');
+      await logSecurityEvent({
+        type: 'rate_limit_exceeded',
+        message: `Rate limit exceeded for action: ${actionName}`,
+        metadata: { 
+          ip,
+          actionName,
+          limit: config.limit,
+          windowInSeconds: config.windowInSeconds
+        }
+      });
+      
       return { 
         success: false, 
         error: `Too many attempts. Please try again in ${result.reset} seconds.` 
